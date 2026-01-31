@@ -1,0 +1,193 @@
+.setup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(13, 17, 23, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.setup-overlay.hidden {
+    display: none;
+}
+
+.setup-container {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-default);
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+}
+
+.setup-header {
+    text-align: center;
+    padding: var(--space-2xl) var(--space-xl) var(--space-lg);
+    border-bottom: 1px solid var(--border-default);
+}
+
+.setup-logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: var(--space-md);
+}
+
+.setup-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-sm);
+}
+
+.setup-header p {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.setup-form {
+    padding: var(--space-xl);
+}
+
+.form-group {
+    margin-bottom: var(--space-lg);
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: var(--space-sm);
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-default);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: 'Courier New', monospace;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+}
+
+.form-group input::placeholder {
+    color: var(--text-muted);
+}
+
+.setup-status-message {
+    padding: var(--space-md);
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: var(--space-lg);
+}
+
+.setup-status-message.info {
+    background: rgba(47, 129, 247, 0.1);
+    border: 1px solid rgba(47, 129, 247, 0.3);
+    color: var(--brand-primary);
+}
+
+.setup-status-message.success {
+    background: rgba(63, 185, 80, 0.1);
+    border: 1px solid rgba(63, 185, 80, 0.3);
+    color: var(--brand-success);
+}
+
+.setup-status-message.error {
+    background: rgba(248, 81, 73, 0.1);
+    border: 1px solid rgba(248, 81, 73, 0.3);
+    color: var(--brand-danger);
+}
+
+.setup-actions {
+    display: flex;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.setup-actions .btn {
+    flex: 1;
+    padding: var(--space-md);
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.setup-actions .btn-primary {
+    background: var(--brand-primary);
+    color: white;
+}
+
+.setup-actions .btn-primary:hover:not(:disabled) {
+    background: var(--brand-secondary);
+}
+
+.setup-actions .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.setup-actions .btn-secondary {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-default);
+}
+
+.setup-actions .btn-secondary:hover {
+    background: var(--bg-hover);
+}
+
+.setup-help {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-default);
+    border-radius: 6px;
+    padding: var(--space-md);
+}
+
+.setup-help p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+}
+
+.setup-help strong {
+    color: var(--text-primary);
+}
+
+.setup-help ol {
+    margin: var(--space-sm) 0;
+    padding-left: var(--space-lg);
+}
+
+.setup-help ol li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-xs);
+}
+
+.setup-security-note {
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-muted);
+    font-size: 12px !important;
+    color: var(--text-muted) !important;
+}

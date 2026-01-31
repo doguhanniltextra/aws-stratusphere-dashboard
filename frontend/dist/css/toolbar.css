@@ -1,0 +1,118 @@
+
+.toolbar {
+    padding: var(--space-lg);
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-default);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+    flex-shrink: 0;
+}
+
+.toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex: 1;
+}
+
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.status {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+}
+
+.search-input {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+    transition: all 0.2s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(47, 129, 247, 0.1);
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* View Toggle Buttons */
+.view-toggle {
+    display: flex;
+    gap: 0;
+    background: var(--bg-primary);
+    border-radius: var(--radius-md);
+    padding: 2px;
+    border: 1px solid var(--border-default);
+}
+
+.view-toggle-btn {
+    padding: var(--space-sm) var(--space-md);
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    transition: all 0.2s ease;
+}
+
+.view-toggle-btn:hover {
+    color: var(--text-primary);
+    background: var(--bg-hover);
+}
+
+.view-toggle-btn.active {
+    background: var(--brand-primary);
+    color: white;
+}
+
+/* Action Buttons */
+.btn {
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-emphasis);
+}
+
+.btn-primary {
+    background: var(--brand-primary);
+    border-color: var(--brand-primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--brand-secondary);
+    border-color: var(--brand-secondary);
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "cloud-infra-dashboard",
+  "outputfilename": "Stratusphere",
+  "frontend:install": "",
+  "frontend:build": "",
+  "frontend:dev:watcher": "",
+  "author": {
+    "name": "Doğuhan",
+    "email": "doguhannilt@gmail.com"
+  },
+  "license": "MIT",
+  "info": {
+    "companyName": "Cloud Infra Dashboard",
+    "productName": "Stratusphere",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright © 2026 Doğuhan",
+    "comments": "Cloud Infrastructure Dashboard"
+  }
+}

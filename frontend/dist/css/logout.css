@@ -1,0 +1,37 @@
+/* Settings Modal Logout Styles */
+.settings-divider {
+    height: 1px;
+    background: var(--border-default);
+    margin: var(--space-lg) 0;
+}
+
+.logout-btn {
+    width: 100%;
+    padding: var(--space-md);
+    background: var(--brand-danger);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: var(--space-sm);
+}
+
+.logout-btn:hover:not(:disabled) {
+    background: #d73027;
+    transform: translateY(-1px);
+}
+
+.logout-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.logout-warning {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: 0;
+    text-align: center;
+}

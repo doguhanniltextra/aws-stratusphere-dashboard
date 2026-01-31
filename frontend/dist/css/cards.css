@@ -1,0 +1,92 @@
+.vpc-grid {
+    flex: 1;
+    padding: var(--space-xl);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-lg);
+    overflow-y: auto;
+    align-content: start;
+}
+
+.vpc-grid.hidden {
+    display: none;
+}
+
+.vpc-card {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.vpc-card:hover {
+    border-color: var(--border-emphasis);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.vpc-card-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-xs);
+}
+
+.vpc-card-id {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    font-family: 'Courier New', monospace;
+    margin-bottom: var(--space-md);
+}
+
+.vpc-card-divider {
+    height: 1px;
+    background: var(--border-muted);
+    margin: var(--space-md) 0;
+}
+
+.vpc-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-sm) 0;
+    font-size: var(--font-size-sm);
+}
+
+.vpc-card-row strong {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.vpc-card-row span {
+    color: var(--text-primary);
+}
+
+.vpc-card-info {
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-muted);
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+}
+
+/* Status Dots */
+.status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: var(--space-xs);
+}
+
+.status-dot.available {
+    background: var(--brand-success);
+    box-shadow: 0 0 8px var(--brand-success);
+}
+
+.status-dot.pending {
+    background: var(--brand-warning);
+    box-shadow: 0 0 8px var(--brand-warning);
+}

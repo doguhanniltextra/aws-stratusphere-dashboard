@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stratusphere</title>
+    <link rel="icon" type="image/png" href="favicon.ico">
+    <link rel="stylesheet" href="style.css?v=1.1">
+    <link rel="stylesheet" href="css/tables.css">
+    <link rel="stylesheet" href="css/utils.css">
+    <link rel="stylesheet" href="css/setup.css">
+    <link rel="stylesheet" href="css/logout.css">
+
+    <!-- Cytoscape.js for Network Topology -->
+    <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+</head>
+
+<body>
+    <!-- AWS Credentials Setup Overlay -->
+    <div id="setupOverlay" class="setup-overlay hidden">
+        <div class="setup-container">
+            <div class="setup-header">
+                <img src="assets/logo.png" alt="Stratusphere" class="setup-logo">
+                <h1>Welcome to Stratusphere</h1>
+                <p>Configure your AWS credentials to get started</p>
+            </div>
+
+            <div class="setup-form">
+                <div class="form-group">
+                    <label for="awsAccessKey">AWS Access Key ID</label>
+                    <input type="text" id="awsAccessKey" placeholder="AKIAIOSFODNN7EXAMPLE" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="awsSecretKey">AWS Secret Access Key</label>
+                    <input type="password" id="awsSecretKey" placeholder="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+                        autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="awsRegion">AWS Region</label>
+                    <select id="awsRegion">
+                        <option value="">Select a region...</option>
+                        <option value="us-east-1">US East (N. Virginia) - us-east-1</option>
+                        <option value="us-east-2">US East (Ohio) - us-east-2</option>
+                        <option value="us-west-1">US West (N. California) - us-west-1</option>
+                        <option value="us-west-2">US West (Oregon) - us-west-2</option>
+                        <option value="eu-west-1">EU (Ireland) - eu-west-1</option>
+                        <option value="eu-west-2">EU (London) - eu-west-2</option>
+                        <option value="eu-central-1">EU (Frankfurt) - eu-central-1</option>
+                        <option value="ap-south-1">Asia Pacific (Mumbai) - ap-south-1</option>
+                        <option value="ap-southeast-1">Asia Pacific (Singapore) - ap-southeast-1</option>
+                        <option value="ap-southeast-2">Asia Pacific (Sydney) - ap-southeast-2</option>
+                        <option value="ap-northeast-1">Asia Pacific (Tokyo) - ap-northeast-1</option>
+                        <option value="sa-east-1">South America (São Paulo) - sa-east-1</option>
+                    </select>
+                </div>
+
+                <div id="setupStatusMessage" class="setup-status-message" style="display: none;"></div>
+
+                <div class="setup-actions">
+                    <button id="testConnectionBtn" class="btn btn-secondary">Test Connection</button>
+                    <button id="saveCredentialsBtn" class="btn btn-primary" disabled>Save & Continue</button>
+                </div>
+
+                <div class="setup-help">
+                    <p><strong>Where to find your credentials:</strong></p>
+                    <ol>
+                        <li>Go to AWS Console → IAM → Users</li>
+                        <li>Select your user → Security credentials</li>
+                        <li>Create access key → Show access key</li>
+                    </ol>
+                    <p class="setup-security-note">🔒 Your credentials are encrypted and stored locally on your machine.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+
+            </div>
+            <div id="adminBadge" class="admin-badge hidden" title="Running with Administrator Privileges!">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>ADMIN</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-view="vpc">
+                    <span class="icon"></span>
+                    <span>VPCs</span>
+                </a>
+                <a href="#" class="nav-item" data-view="topology">
+                    <span class="icon"></span>
+                    <span>Topology</span>
+                </a>
+                <a href="#" class="nav-item" data-view="subnet">
+                    <span class="icon"></span>
+                    <span>Subnets</span>
+                </a>
+                <a href="#" class="nav-item" data-view="ec2">
+                    <span class="icon"></span>
+                    <span>EC2 Instances</span>
+                </a>
+                <a href="#" class="nav-item" data-view="ecs">
+                    <span class="icon"></span>
+                    <span>ECS Clusters</span>
+                </a>
+                <a href="#" class="nav-item" data-view="securitygroup">
+                    <span class="icon"></span>
+                    <span>Security Groups</span>
+                </a>
+                <a href="#" class="nav-item" data-view="natgateway">
+                    <span class="icon"></span>
+                    <span>NAT Gateways</span>
+                </a>
+                <a href="#" class="nav-item" data-view="routetable">
+                    <span class="icon"></span>
+                    <span>Route Tables</span>
+                </a>
+                <a href="#" class="nav-item" data-view="s3">
+                    <span class="icon"></span>
+                    <span>S3 Buckets</span>
+                </a>
+                <a href="#" class="nav-item" data-view="targetgroup">
+                    <span class="icon"></span>
+                    <span>Target Groups</span>
+                </a>
+                <a href="#" class="nav-item" data-view="loadbalancer">
+                    <span class="icon"></span>
+                    <span>Load Balancers</span>
+                </a>
+                <a href="#" class="nav-item" data-view="elasticip">
+                    <span class="icon"></span>
+                    <span>Elastic IPs</span>
+                </a>
+                <a href="#" class="nav-item" data-view="lambda">
+                    <span class="icon"></span>
+                    <span>Lambda Functions</span>
+                </a>
+                <a href="#" class="nav-item" data-view="rds">
+                    <span class="icon"></span>
+                    <span>RDS Instances</span>
+                </a>
+                <a href="#" class="nav-item" data-view="playground">
+                    <span class="icon"></span>
+                    <span>Playground</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <span class="version">v1.0.0</span>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header/Toolbar -->
+            <header class="toolbar">
+                <div class="toolbar-left">
+                    <div class="status" id="statusText">Loading...</div>
+                    <div class="search-box">
+                        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search VPCs...">
+                    </div>
+                </div>
+
+                <div class="toolbar-right">
+                    <!-- View Toggle -->
+                    <div class="view-toggle">
+                        <button id="cardViewBtn" class="view-toggle-btn active" title="Card View">
+                            Cards
+                        </button>
+                        <button id="tableViewBtn" class="view-toggle-btn" title="Table View">
+                            Table
+                        </button>
+                    </div>
+
+                    <button id="refreshBtn" class="btn btn-primary">
+                        Refresh
+                    </button>
+                    <button id="settingsBtn" class="btn">
+                        Settings
+                    </button>
+                </div>
+            </header>
+
+            <!-- Loading Bar -->
+            <div id="loadingBar" class="loading-bar hidden"></div>
+
+            <!-- Topology Container -->
+            <div id="topologyContainer" class="topology-container hidden">
+                <div class="topology-controls">
+                    <button id="topologyReset" class="btn btn-sm">🔄 Reset View</button>
+                    <button id="topologyFit" class="btn btn-sm">📐 Fit to Screen</button>
+                    <div class="topology-legend">
+                        <span class="legend-item"><span class="legend-color vpc-color"></span> VPC</span>
+                        <span class="legend-item"><span class="legend-color subnet-color"></span> Subnet</span>
+                        <span class="legend-item"><span class="legend-color ec2-color"></span> EC2</span>
+                        <span class="legend-item"><span class="legend-color rds-color"></span> RDS</span>
+                        <span class="legend-item"><span class="legend-color lambda-color"></span> Lambda</span>
+                    </div>
+                </div>
+                <div id="cy" class="topology-canvas"></div>
+            </div>
+
+            <!-- VPC Cards Grid -->
+            <div id="vpcGrid" class="vpc-grid">
+                <!-- VPC cards will be dynamically inserted here -->
+            </div>
+
+            <!-- VPC Table View -->
+            <div id="vpcTable" class="vpc-table-container hidden">
+                <table class="vpc-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>VPC ID</th>
+                            <th>CIDR Block</th>
+                            <th>Status</th>
+                            <th>Default</th>
+                            <th>Tenancy</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vpcTableBody">
+                        <!-- Table rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- EC2 Instances Table View -->
+            <div id="ec2Table" class="ec2-table-container hidden">
+                <table class="ec2-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Instance ID</th>
+                            <th>Instance Type</th>
+                            <th>State</th>
+                            <th>Public IP</th>
+                            <th>Private IP</th>
+                            <th>Launch Time</th>
+                            <th>VPC ID</th>
+                            <th>Subnet ID</th>
+                            <th>Image ID</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ec2TableBody">
+                        <!-- Table rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ECS Clusters Table View -->
+            <div id="ecsTable" class="ecs-table-container hidden">
+                <table class="ecs-table">
+                    <thead>
+                        <tr>
+                            <th>Cluster Name</th>
+                            <th>Status</th>
+                            <th>Container Instances</th>
+                            <th>Running Tasks</th>
+                            <th>Pending Tasks</th>
+                            <th>Active Services</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ecsTableBody">
+                        <!-- Table rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Subnets Table View -->
+            <div id="subnetTable" class="subnet-table-container hidden">
+                <table class="subnet-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Subnet ID</th>
+                            <th>CIDR Block</th>
+                            <th>VPC ID</th>
+                            <th>Availability Zone</th>
+                            <th>State</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subnetTableBody">
+                        <!-- Table rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Security Groups Table View -->
+            <div id="securityGroupTable" class="securitygroup-table-container hidden">
+                <table class="securitygroup-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Group ID</th>
+                            <th>VPC ID</th>
+                            <th>Ingress Rules</th>
+                            <th>Egress Rules</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="securityGroupTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- NAT Gateway Table View -->
+            <div id="natTable" class="nat-table-container hidden">
+                <table class="nat-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>ID</th>
+                            <th>State</th>
+                            <th>Public IP</th>
+                            <th>Private IP</th>
+                            <th>VPC ID</th>
+                            <th>Subnet ID</th>
+                        </tr>
+                    </thead>
+                    <tbody id="natTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Route Table View -->
+            <div id="routeTable" class="route-table-container hidden">
+                <table class="route-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>ID</th>
+                            <th>VPC ID</th>
+                            <th>Main</th>
+                            <th>Routes</th>
+                            <th>Associations</th>
+                        </tr>
+                    </thead>
+                    <tbody id="routeTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- S3 Bucket Table View -->
+            <div id="s3Table" class="s3-table-container hidden">
+                <table class="s3-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Region</th>
+                            <th>Created</th>
+                            <th>Versioning</th>
+                        </tr>
+                    </thead>
+                    <tbody id="s3TableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Target Group Table View -->
+            <div id="targetGroupTable" class="tg-table-container hidden">
+                <table class="tg-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Protocol</th>
+                            <th>Port</th>
+                            <th>Type</th>
+                            <th>VPC ID</th>
+                        </tr>
+                    </thead>
+                    <tbody id="targetGroupTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Load Balancer Table View -->
+            <div id="lbTable" class="lb-table-container hidden">
+                <table class="lb-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>State</th>
+                            <th>Type</th>
+                            <th>Scheme</th>
+                            <th>DNS Name</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lbTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Elastic IP Table View -->
+            <div id="eipTable" class="eip-table-container hidden">
+                <table class="eip-table">
+                    <thead>
+                        <tr>
+                            <th>Public IP</th>
+                            <th>Allocation ID</th>
+                            <th>Instance ID</th>
+                            <th>Private IP</th>
+                            <th>Association ID</th>
+                        </tr>
+                    </thead>
+                    <tbody id="eipTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Lambda Functions Table View -->
+            <div id="lambdaTable" class="lambda-table-container hidden">
+                <table class="lambda-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Runtime</th>
+                            <th>Memory</th>
+                            <th>State</th>
+                            <th>Last Modified</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lambdaTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- RDS Instances Table View -->
+            <div id="rdsTable" class="rds-table-container hidden">
+                <table class="rds-table">
+                    <thead>
+                        <tr>
+                            <th>DB Identifier</th>
+                            <th>Engine</th>
+                            <th>Class</th>
+                            <th>Status</th>
+                            <th>Storage</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rdsTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Playground Container -->
+            <div id="playgroundContainer" class="playground-container hidden">
+                <div class="playground-header">
+                    <h2>Infrastructure Builder</h2>
+                    <p>Build your AWS infrastructure visually and generate Terraform code</p>
+                </div>
+
+                <!-- Resource Toolbar -->
+                <div class="resource-toolbar">
+                    <button class="resource-btn" data-type="VPC">
+                        <span class="icon"></span>
+                        <span>VPC</span>
+                    </button>
+                    <button class="resource-btn" data-type="Subnet">
+                        <span class="icon"></span>
+                        <span>Subnet</span>
+                    </button>
+                    <button class="resource-btn" data-type="EC2">
+                        <span class="icon"></span>
+                        <span>EC2</span>
+                    </button>
+                    <button class="resource-btn" data-type="RDS">
+                        <span class="icon"></span>
+                        <span>RDS</span>
+                    </button>
+                    <button class="resource-btn" data-type="S3">
+                        <span class="icon"></span>
+                        <span>S3</span>
+                    </button>
+                    <button class="resource-btn" data-type="Lambda">
+                        <span class="icon"></span>
+                        <span>Lambda</span>
+                    </button>
+                    <button class="resource-btn" data-type="SecurityGroup">
+                        <span class="icon"></span>
+                        <span>Security Group</span>
+                    </button>
+                </div>
+
+                <!-- Tree Container -->
+                <div class="tree-container">
+                    <div class="tree-header">
+                        <h3>Infrastructure Tree</h3>
+                        <div class="tree-actions">
+                            <button id="clearTreeBtn" class="btn btn-sm">Clear All</button>
+                            <button id="generateTerraformBtn" class="btn btn-primary btn-sm">Generate Terraform</button>
+                        </div>
+                    </div>
+                    <div id="infraTree" class="tree-view">
+                        <div class="tree-empty">
+                            <span class="empty-icon"></span>
+                            <p>No resources yet. Click buttons above to add resources.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resource Property Modal -->
+            <div id="resourceModal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="modalTitle">Add Resource</h2>
+                        <span id="closeResourceModal" class="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <form id="resourceForm">
+                            <!-- Form fields will be dynamically generated -->
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="pagination-info">
+                            <span id="pageIndicator">Page 1 of 1</span>
+                        </div>
+                        <div class="modal-actions">
+                            <button id="prevPageBtn" class="btn" style="display: none;">← Previous</button>
+                            <button id="nextPageBtn" class="btn" style="display: none;">Next →</button>
+                            <button id="cancelResourceBtn" class="btn">Cancel</button>
+                            <button id="saveResourceBtn" class="btn btn-primary">Create Resource</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terraform Preview Modal -->
+            <div id="terraformModal" class="modal hidden">
+                <div class="modal-content modal-large">
+                    <div class="modal-header">
+                        <h2>Generated Terraform Code</h2>
+                        <span id="closeTerraformModal" class="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="code-actions">
+                            <button id="copyTerraformBtn" class="btn btn-sm">📋 Copy</button>
+                            <button id="saveFileTerraformBtn" class="btn btn-sm">💾 Save As...</button>
+                        </div>
+                        <pre id="terraformCode" class="terraform-code"></pre>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="pagination-info">
+                            <span id="terraformPageIndicator">Page 1 of 1</span>
+                        </div>
+                        <div class="modal-actions">
+                            <button id="prevTerraformPageBtn" class="btn" style="display: none;">← Previous</button>
+                            <button id="nextTerraformPageBtn" class="btn" style="display: none;">Next →</button>
+                            <button id="closeTerraformFooterBtn" class="btn btn-primary">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Resource Detail Sidebar -->
+    <div id="detailSidebar" class="detail-sidebar">
+        <div class="sidebar-header">
+            <h2>Resource Details</h2>
+            <span id="closeDetailSidebar" class="close">&times;</span>
+        </div>
+        <div class="sidebar-content">
+            <pre id="detailContent" class="json-viewer"></pre>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <span id="closeSettings" class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="setting-item">
+                    <label>AWS Region:</label>
+                    <span id="settingsRegion" class="setting-value">Loading...</span>
+                </div>
+                <div class="setting-item">
+                    <label>Account ID:</label>
+                    <span id="settingsAccountID" class="setting-value">Loading...</span>
+                </div>
+                <div class="setting-item">
+                    <label>User ARN:</label>
+                    <span id="settingsUserARN" class="setting-value" style="font-size: 0.75rem;">Loading...</span>
+                </div>
+                <div class="setting-item">
+                    <label>App Version:</label>
+                    <span class="setting-value">v1.0.0</span>
+                </div>
+
+                <div class="settings-divider"></div>
+
+                <div class="setting-item">
+                    <button id="logoutBtn" class="logout-btn">
+                        Logout & Clear Credentials
+                    </button>
+                    <p class="logout-warning">This will delete your stored AWS credentials. You'll need to re-enter them
+                        on next launch.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="wailsjs/runtime/runtime.js"></script>
+    <script src="wailsjs/go/main/App.js"></script>
+    <script src="js/main.js" type="module" defer></script>
+</body>
+
+</html>
