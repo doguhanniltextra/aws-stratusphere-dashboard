@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./build/appicon.png" alt="Stratusphere Logo" width="200"/>
+  <img src="./appicon.png" alt="Stratusphere Logo" width="200"/>
   
   # Stratusphere
   
