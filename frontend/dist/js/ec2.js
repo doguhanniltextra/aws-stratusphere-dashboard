@@ -79,7 +79,7 @@ export function initEC2Listeners() {
                 return;
             }
             const id = card.dataset.id;
-            const instance = state.allVPCs.find(v => v.ID === id);
+            const instance = state.allEC2Instances.find(v => v.ID === id);
             if (instance) {
                 detailSidebar.open(instance);
             }
@@ -122,10 +122,10 @@ export async function fetchEC2Instances() {
         const instances = await window.go.main.App.GetEC2Instances();
         state.loadingBar.classList.add('hidden');
 
-        state.setAllVPCs(instances || []);
-        state.setFilteredVPCs([...state.allVPCs]);
+        state.setAllEC2Instances(instances || []);
+        state.setFilteredEC2Instances([...state.allEC2Instances]);
 
-        if (state.allVPCs.length === 0) {
+        if (state.allEC2Instances.length === 0) {
             state.statusText.textContent = 'No EC2 instances found';
             const emptyCard = `
                 <div class="vpc-card" data-empty="true" style="cursor: pointer;">
@@ -142,11 +142,26 @@ export async function fetchEC2Instances() {
                 </tr>
             `;
         } else {
-            state.statusText.textContent = `${state.allVPCs.length} EC2 instance(s) found`;
+            state.statusText.textContent = `${state.allEC2Instances.length} EC2 instance(s) found`;
             if (state.currentView === 'cards') {
-                state.vpcGrid.innerHTML = state.allVPCs.map(instance => createEC2Card(instance)).join('');
+                if (state.currentGroupField && state.currentGroupField !== 'none') {
+                    const groups = state.groupData(state.filteredEC2Instances, state.currentGroupField);
+                    state.vpcGrid.innerHTML = Object.entries(groups).map(([groupName, items]) => `
+                        <div class="resource-group">
+                            <div class="group-header">
+                                <span class="group-title">${groupName}</span>
+                                <span class="group-count">${items.length}</span>
+                            </div>
+                            <div class="group-content">
+                                ${items.map(instance => createEC2Card(instance)).join('')}
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    state.vpcGrid.innerHTML = state.filteredEC2Instances.map(instance => createEC2Card(instance)).join('');
+                }
             } else {
-                state.vpcTableBody.innerHTML = state.allVPCs.map(instance => createEC2TableRow(instance)).join('');
+                state.vpcTableBody.innerHTML = state.filteredEC2Instances.map(instance => createEC2TableRow(instance)).join('');
             }
         }
     } catch (error) {

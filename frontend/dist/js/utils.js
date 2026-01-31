@@ -15,6 +15,98 @@ export function updateActiveMenu(viewName) {
     }
 }
 
+export function populateGroupByOptions(page) {
+    const select = document.getElementById('groupBySelect');
+    if (!select) return;
+
+    select.innerHTML = '<option value="none">None</option>';
+
+    const options = getGroupByOptionsForPage(page);
+    options.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt.value;
+        option.textContent = opt.label;
+        select.appendChild(option);
+    });
+
+    // Reset selection to none when switching pages
+    select.value = 'none';
+    state.setGroupField('none');
+
+    // Hide dropdown if no options available (except None)
+    const container = select.parentElement;
+    if (container) {
+        if (options.length === 0) {
+            container.style.display = 'none';
+        } else {
+            container.style.display = 'flex';
+        }
+    }
+}
+
+function getGroupByOptionsForPage(page) {
+    const map = {
+        'vpc-list': [
+            { value: 'State', label: 'State' },
+            { value: 'IsDefault', label: 'Is Default' },
+            { value: 'InstanceTenancy', label: 'Tenancy' }
+        ],
+        'subnet-list': [
+            { value: 'State', label: 'State' },
+            { value: 'VpcId', label: 'VPC ID' },
+            { value: 'AvailabilityZone', label: 'Availability Zone' },
+            { value: 'MapPublicIpOnLaunch', label: 'Public IP Auto-assign' }
+        ],
+        'ec2': [
+            { value: 'State', label: 'State' },
+            { value: 'InstanceType', label: 'Instance Type' },
+            { value: 'KeyName', label: 'Key Pair' },
+            { value: 'AvailabilityZone', label: 'Availability Zone' },
+            { value: 'VpcId', label: 'VPC ID' }
+        ],
+        'ecs': [
+            { value: 'Status', label: 'Status' }
+        ],
+        's3-list': [
+            { value: 'Region', label: 'Region' } // Note: Region might need to be derived if not in object
+        ],
+        'securitygroup-list': [
+            { value: 'VpcId', label: 'VPC ID' }
+        ],
+        'nat-list': [
+            { value: 'State', label: 'State' },
+            { value: 'VpcId', label: 'VPC ID' }
+        ],
+        'route-list': [
+            { value: 'VpcId', label: 'VPC ID' }
+        ],
+        'target-group-list': [
+            { value: 'Protocol', label: 'Protocol' },
+            { value: 'VpcId', label: 'VPC ID' },
+            { value: 'TargetType', label: 'Target Type' }
+        ],
+        'lb-list': [
+            { value: 'State', label: 'State' }, // State is object, might need handling
+            { value: 'Type', label: 'Type' },
+            { value: 'Scheme', label: 'Scheme' },
+            { value: 'VpcId', label: 'VPC ID' }
+        ],
+        'elasticip-list': [
+            { value: 'Domain', label: 'Domain' }
+        ],
+        'lambda-list': [
+            { value: 'Runtime', label: 'Runtime' },
+            { value: 'LastModified', label: 'Last Modified' } // Tricky to group by exact date
+        ],
+        'rds-list': [
+            { value: 'Engine', label: 'Engine' },
+            { value: 'DBInstanceStatus', label: 'Status' },
+            { value: 'AvailabilityZone', label: 'Availability Zone' }
+        ]
+    };
+    return map[page] || [];
+}
+
 export function showDashboard(statusText, vpcGrid) {
     statusText.textContent = 'Dashboard';
     vpcGrid.innerHTML = `
@@ -25,6 +117,12 @@ export function showDashboard(statusText, vpcGrid) {
             </div>
         </div>
     `;
+
+    // Hide group dropdown on dashboard
+    const select = document.getElementById('groupBySelect');
+    if (select && select.parentElement) {
+        select.parentElement.style.display = 'none';
+    }
 }
 
 export function switchView(viewName) {
@@ -37,6 +135,8 @@ export function switchView(viewName) {
         // It's a page switch
         state.setCurrentPage(viewName);
         updateActiveMenu(viewName);
+        // Update Group By options
+        populateGroupByOptions(viewName);
     }
 
     // Hide all view sections first

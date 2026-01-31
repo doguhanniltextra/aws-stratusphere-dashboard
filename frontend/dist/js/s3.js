@@ -104,7 +104,22 @@ export function renderS3Buckets() {
     state.statusText.textContent = `${state.filteredS3Buckets.length} S3 Bucket(s) found`;
 
     if (state.currentView === 'cards') {
-        state.vpcGrid.innerHTML = state.filteredS3Buckets.map(b => createS3Card(b)).join('');
+        if (state.currentGroupField && state.currentGroupField !== 'none') {
+            const groups = state.groupData(state.filteredS3Buckets, state.currentGroupField);
+            state.vpcGrid.innerHTML = Object.entries(groups).map(([groupName, items]) => `
+                <div class="resource-group">
+                    <div class="group-header">
+                        <span class="group-title">${groupName}</span>
+                        <span class="group-count">${items.length}</span>
+                    </div>
+                    <div class="group-content">
+                        ${items.map(b => createS3Card(b)).join('')}
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            state.vpcGrid.innerHTML = state.filteredS3Buckets.map(b => createS3Card(b)).join('');
+        }
     } else {
         state.s3TableBody.innerHTML = state.filteredS3Buckets.map(b => createS3TableRow(b)).join('');
     }

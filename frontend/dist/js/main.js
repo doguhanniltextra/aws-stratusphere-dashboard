@@ -1,7 +1,7 @@
 
 import * as state from './state.js';
 import { themeManager } from './themeManager.js';
-import { updateActiveMenu, switchView, showDashboard } from './utils.js';
+import { updateActiveMenu, switchView, showDashboard, populateGroupByOptions } from './utils.js';
 import { fetchVPCs, filterVPCs, initVPCListeners } from './vpc.js';
 import { fetchEC2Instances, initEC2Listeners } from './ec2.js';
 import { fetchECSClusters, initECSListeners } from './ecs.js';
@@ -112,7 +112,31 @@ state.tableViewBtn.addEventListener('click', () => {
     else if (state.currentPage === 'elasticip-list') fetchElasticIPs();
     else if (state.currentPage === 'lambda-list') fetchLambdaFunctions();
     else if (state.currentPage === 'rds-list') fetchRDSInstances();
+    else if (state.currentPage === 'rds-list') fetchRDSInstances();
 });
+
+// Group By Dropdown
+const groupBySelect = document.getElementById('groupBySelect');
+if (groupBySelect) {
+    groupBySelect.addEventListener('change', (e) => {
+        state.setGroupField(e.target.value);
+
+        // Trigger re-fetch/render
+        if (state.currentPage === 'vpc-list') fetchVPCs();
+        else if (state.currentPage === 'ec2') fetchEC2Instances();
+        else if (state.currentPage === 'ecs') fetchECSClusters();
+        else if (state.currentPage === 'subnet-list') fetchSubnets();
+        else if (state.currentPage === 'securitygroup-list') fetchSecurityGroups();
+        else if (state.currentPage === 'nat-list') fetchNATGateways();
+        else if (state.currentPage === 'route-list') fetchRouteTables();
+        else if (state.currentPage === 's3-list') fetchS3Buckets();
+        else if (state.currentPage === 'target-group-list') fetchTargetGroups();
+        else if (state.currentPage === 'lb-list') fetchLoadBalancers();
+        else if (state.currentPage === 'elasticip-list') fetchElasticIPs();
+        else if (state.currentPage === 'lambda-list') fetchLambdaFunctions();
+        else if (state.currentPage === 'rds-list') fetchRDSInstances();
+    });
+}
 
 // Re-render current page
 if (state.currentPage === 'vpc-list') {

@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="css/cards.css">
     <link rel="stylesheet" href="css/tables.css">
     <link rel="stylesheet" href="css/select.css">
+    <link rel="stylesheet" href="css/groups.css">
     <link rel="stylesheet" href="css/utils.css">
     <link rel="stylesheet" href="css/setup.css">
     <link rel="stylesheet" href="css/logout.css">
@@ -178,6 +179,14 @@
                 </div>
 
                 <div class="toolbar-right">
+                    <!-- Group By Dropdown -->
+                    <div class="group-by-container" style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 0.8em; color: var(--text-muted); padding-right: 4px;">Group:</span>
+                        <select id="groupBySelect" class="custom-select"
+                            style="min-width: 120px; padding-top: 4px; padding-bottom: 4px;">
+                            <option value="none">None</option>
+                        </select>
+                    </div>
                     <!-- View Toggle -->
                     <div class="view-toggle">
                         <button id="cardViewBtn" class="view-toggle-btn active" title="Card View">
@@ -601,7 +610,7 @@
 
                 <div class="setting-item">
                     <label for="themeSelect">Theme:</label>
-                    <select id="themeSelect" class="theme-select">
+                    <select id="themeSelect" class="custom-select">
                         <!-- Options populated by JS -->
                     </select>
                 </div>

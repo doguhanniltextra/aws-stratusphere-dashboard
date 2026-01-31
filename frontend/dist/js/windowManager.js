@@ -108,8 +108,9 @@ export const WindowManager = {
                 return;
             }
 
-            const { switchView } = await import('./utils.js');
+            const { switchView, populateGroupByOptions } = await import('./utils.js');
             switchView('cards');
+            populateGroupByOptions(window.currentPage || 'vpc-list'); // Ensure options are populated
 
             switch (viewName) {
                 case 'vpc':

@@ -141,9 +141,24 @@ export async function fetchVPCs() {
             state.statusText.textContent = `${state.allVPCs.length} VPC(s) found`;
             // Render using card view by default
             if (state.currentView === 'cards') {
-                state.vpcGrid.innerHTML = state.allVPCs.map(vpc => createVPCCard(vpc)).join('');
+                if (state.currentGroupField && state.currentGroupField !== 'none') {
+                    const groups = state.groupData(state.filteredVPCs, state.currentGroupField);
+                    state.vpcGrid.innerHTML = Object.entries(groups).map(([groupName, items]) => `
+                        <div class="resource-group">
+                            <div class="group-header">
+                                <span class="group-title">${groupName}</span>
+                                <span class="group-count">${items.length}</span>
+                            </div>
+                            <div class="group-content">
+                                ${items.map(vpc => createVPCCard(vpc)).join('')}
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    state.vpcGrid.innerHTML = state.filteredVPCs.map(vpc => createVPCCard(vpc)).join('');
+                }
             } else {
-                state.vpcTableBody.innerHTML = state.allVPCs.map(vpc => createVPCTableRow(vpc)).join('');
+                state.vpcTableBody.innerHTML = state.filteredVPCs.map(vpc => createVPCTableRow(vpc)).join('');
             }
         }
 

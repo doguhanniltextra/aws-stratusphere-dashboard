@@ -58,6 +58,37 @@ export let filteredLambdaFunctions = [];
 export let allRDSInstances = [];
 export let filteredRDSInstances = [];
 
+
+
+export let currentGroupField = 'none';
+
+// Helper to group data
+export function groupData(data, field) {
+    if (!field || field === 'none') return null;
+
+    return data.reduce((groups, item) => {
+        let key = item[field];
+        // Handle nested or missing keys
+        if (key === undefined || key === null || key === '') {
+            key = 'Other';
+        }
+        // Boolean to string
+        if (typeof key === 'boolean') {
+            key = key ? 'Yes' : 'No';
+        }
+
+        if (!groups[key]) {
+            groups[key] = [];
+        }
+        groups[key].push(item);
+        return groups;
+    }, {});
+}
+
+export function setGroupField(field) {
+    currentGroupField = field;
+}
+
 export function setCurrentPage(page) {
     currentPage = page;
 }

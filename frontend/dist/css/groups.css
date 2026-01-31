@@ -1,0 +1,50 @@
+/* Resource Grouping Styles */
+
+.resource-group {
+    margin-bottom: var(--space-xl);
+}
+
+.group-header {
+    display: flex;
+    align-items: center;
+    padding: var(--space-sm) var(--space-lg);
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-default);
+    border-top: 1px solid var(--border-default);
+    /* Optional: distinct sections */
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(var(--backdrop-blur));
+    margin-bottom: var(--space-md);
+}
+
+.group-title {
+    font-size: var(--font-size-md);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-right: var(--space-sm);
+}
+
+.group-count {
+    font-size: var(--font-size-xs);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-default);
+}
+
+.group-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-lg);
+    padding: 0 var(--space-lg);
+    /* Match grid padding if needed */
+}
+
+/* Starlight Theme Overrides if needed */
+[data-theme="starlight"] .group-header {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
