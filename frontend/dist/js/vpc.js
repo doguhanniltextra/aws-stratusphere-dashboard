@@ -126,7 +126,6 @@ export async function fetchVPCs() {
             const emptyCard = `
                 <div class="vpc-card" data-empty="true" style="cursor: pointer;">
                     <div class="vpc-card-title">No VPCs</div>
-                    <div class="vpc-card-divider"></div>
                     <div class="vpc-card-info">No VPCs found in your AWS account</div>
                 </div>
             `;
@@ -195,7 +194,6 @@ export function filterVPCs(query) {
         const emptyCard = `
             <div class="vpc-card">
                 <div class="vpc-card-title">No Results</div>
-                <div class="vpc-card-divider"></div>
                 <div class="vpc-card-info">No VPCs match your search criteria</div>
             </div>
         `;

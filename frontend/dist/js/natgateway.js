@@ -110,7 +110,6 @@ export function renderNATGateways() {
         const emptyCard = `
             <div class="vpc-card" data-empty="true" style="cursor: pointer;">
                 <div class="vpc-card-title">No NAT Gateways</div>
-                <div class="vpc-card-divider"></div>
                 <div class="vpc-card-info">No NAT Gateways found in your AWS account</div>
             </div>
         `;

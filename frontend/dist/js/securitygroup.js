@@ -92,7 +92,6 @@ export function renderSecurityGroups() {
         const emptyCard = `
             <div class="vpc-card" data-empty="true" style="cursor: pointer;">
                 <div class="vpc-card-title">No Security Groups</div>
-                <div class="vpc-card-divider"></div>
                 <div class="vpc-card-info">No security groups found in your AWS account</div>
             </div>
         `;

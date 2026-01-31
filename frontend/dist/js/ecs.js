@@ -11,7 +11,6 @@ export function createECSCard(cluster) {
     return `
         <div class="vpc-card" data-id="${cluster.ClusterArn}" style="cursor: pointer;">
             <div class="vpc-card-title">${title}</div>
-            <div class="vpc-card-divider"></div>
             <div class="vpc-card-row">
                 <div>
                     <span class="status-dot ${statusClass}"></span>
@@ -97,7 +96,6 @@ export async function fetchECSClusters() {
             const emptyCard = `
                 <div class="vpc-card" data-empty="true" style="cursor: pointer;">
                     <div class="vpc-card-title">No ECS Clusters</div>
-                    <div class="vpc-card-divider"></div>
                     <div class="vpc-card-info">No ECS clusters found in your AWS account</div>
                 </div>
             `;

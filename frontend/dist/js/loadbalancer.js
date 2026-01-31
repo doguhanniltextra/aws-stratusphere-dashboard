@@ -100,7 +100,6 @@ export function renderLoadBalancers() {
         const emptyCard = `
             <div class="vpc-card" data-empty="true" style="cursor: pointer;">
                 <div class="vpc-card-title">No Load Balancers</div>
-                <div class="vpc-card-divider"></div>
                 <div class="vpc-card-info">No Load Balancers found in your AWS account</div>
             </div>
         `;

@@ -130,7 +130,6 @@ export async function fetchEC2Instances() {
             const emptyCard = `
                 <div class="vpc-card" data-empty="true" style="cursor: pointer;">
                     <div class="vpc-card-title">No EC2 Instances</div>
-                    <div class="vpc-card-divider"></div>
                     <div class="vpc-card-info">No EC2 instances found in your AWS account</div>
                 </div>
             `;

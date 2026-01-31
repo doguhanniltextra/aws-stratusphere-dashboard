@@ -1,13 +1,130 @@
-
 .toolbar {
-    padding: var(--space-lg);
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-default);
+    padding: var(--space-md) var(--space-xl);
+    background: var(--bg-header);
+    backdrop-filter: blur(var(--backdrop-blur));
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: var(--space-md);
     flex-shrink: 0;
+    height: 70px;
+}
+
+.toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    flex: 1;
+}
+
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.status {
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+    max-width: 480px;
+}
+
+.search-input {
+    width: 100%;
+    padding: var(--space-sm) var(--space-lg);
+    background: var(--bg-app);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    /* Pill shape */
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    background: var(--bg-card);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* View Toggle Buttons */
+.view-toggle {
+    display: flex;
+    gap: 4px;
+    background: var(--bg-app);
+    border-radius: var(--radius-lg);
+    padding: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.view-toggle-btn {
+    padding: var(--space-xs) var(--space-md);
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.view-toggle-btn:hover {
+    color: var(--text-primary);
+    background: var(--bg-hover);
+}
+
+.view-toggle-btn.active {
+    background: var(--bg-card);
+    color: var(--brand-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Action Buttons */
+.btn {
+    padding: var(--space-sm) var(--space-lg);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-weight: 500;
+}
+
+.btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--text-muted);
+    transform: translateY(-1px);
+}
+
+.btn-primary {
+    background: var(--brand-primary);
+    border-color: var(--brand-primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:hover {
+    background: var(--brand-secondary);
+    border-color: var(--brand-secondary);
+    box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4);
 }
 
 .toolbar-left {

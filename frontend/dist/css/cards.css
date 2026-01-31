@@ -2,10 +2,136 @@
     flex: 1;
     padding: var(--space-xl);
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: var(--space-lg);
     overflow-y: auto;
     align-content: start;
+}
+
+.vpc-grid.hidden {
+    display: none;
+}
+
+.vpc-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(var(--backdrop-blur));
+    -webkit-backdrop-filter: blur(var(--backdrop-blur));
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.vpc-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.vpc-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg), var(--accent-glow);
+    border-color: var(--brand-primary);
+}
+
+.vpc-card:hover::before {
+    opacity: 1;
+}
+
+.vpc-card-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-xs);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vpc-card-id {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    margin-bottom: var(--space-md);
+    opacity: 0.8;
+}
+
+.vpc-card-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: var(--space-md) 0;
+}
+
+.vpc-card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-xs) 0;
+    font-size: var(--font-size-sm);
+}
+
+.vpc-card-row strong {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.vpc-card-row span {
+    color: var(--text-primary);
+}
+
+.vpc-card-info {
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-color);
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+}
+
+/* Status Dots with Glow */
+.status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: var(--space-xs);
+    position: relative;
+}
+
+.status-dot::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 50%;
+    opacity: 0.4;
+    filter: blur(2px);
+}
+
+.status-dot.available {
+    background: var(--brand-success);
+}
+
+.status-dot.available::after {
+    background: var(--brand-success);
+}
+
+.status-dot.pending {
+    background: var(--brand-warning);
+}
+
+.status-dot.pending::after {
+    background: var(--brand-warning);
 }
 
 .vpc-grid.hidden {

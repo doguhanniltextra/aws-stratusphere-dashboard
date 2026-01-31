@@ -1,5 +1,6 @@
 
 import * as state from './state.js';
+import { themeManager } from './themeManager.js';
 import { updateActiveMenu, switchView, showDashboard } from './utils.js';
 import { fetchVPCs, filterVPCs, initVPCListeners } from './vpc.js';
 import { fetchEC2Instances, initEC2Listeners } from './ec2.js';

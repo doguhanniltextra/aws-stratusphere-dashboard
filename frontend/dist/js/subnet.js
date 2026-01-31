@@ -103,7 +103,6 @@ export function renderSubnets() {
         const emptyCard = `
             <div class="vpc-card" data-empty="true" style="cursor: pointer;">
                 <div class="vpc-card-title">No Subnets</div>
-                <div class="vpc-card-divider"></div>
                 <div class="vpc-card-info">No subnets found in your AWS account</div>
             </div>
         `;

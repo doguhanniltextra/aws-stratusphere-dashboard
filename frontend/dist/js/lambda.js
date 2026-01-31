@@ -89,7 +89,6 @@ export function renderLambdaFunctions() {
         const emptyCard = `
             <div class="vpc-card" data-empty="true" style="cursor: pointer;">
                 <div class="vpc-card-title">No Lambda Functions</div>
-                <div class="vpc-card-divider"></div>
                 <div class="vpc-card-info">No Lambda functions found in your AWS account</div>
             </div>
         `;

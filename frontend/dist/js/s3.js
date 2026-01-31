@@ -93,7 +93,6 @@ export function renderS3Buckets() {
         const emptyCard = `
             <div class="vpc-card" data-empty="true" style="cursor: pointer;">
                 <div class="vpc-card-title">No S3 Buckets</div>
-                <div class="vpc-card-divider"></div>
                 <div class="vpc-card-info">No S3 Buckets found in your AWS account</div>
             </div>
         `;

@@ -1,3 +1,5 @@
+import { themeManager } from './themeManager.js';
+
 export function initSettings() {
     const settingsBtn = document.getElementById('settingsBtn');
     const modal = document.getElementById('settingsModal');
@@ -44,6 +46,24 @@ export function initSettings() {
         parts[4] = '************'; // Mask account ID in ARN
         return parts.join(':');
     };
+
+    // Theme Selector Logic
+    const themeSelect = document.getElementById('themeSelect');
+    if (themeSelect) {
+        // Populate options
+        const themes = themeManager.getThemes();
+        themeSelect.innerHTML = themes.map(t =>
+            `<option value="${t.id}">${t.name}</option>`
+        ).join('');
+
+        // Set current value
+        themeSelect.value = themeManager.getCurrentTheme();
+
+        // Handle change
+        themeSelect.addEventListener('change', (e) => {
+            themeManager.setTheme(e.target.value);
+        });
+    }
 
     // Open modal
     settingsBtn.addEventListener('click', async () => {

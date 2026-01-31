@@ -77,7 +77,6 @@ export function renderElasticIPs() {
         const emptyCard = `
             <div class="vpc-card" data-empty="true" style="cursor: pointer;">
                 <div class="vpc-card-title">No Elastic IPs</div>
-                <div class="vpc-card-divider"></div>
                 <div class="vpc-card-info">No Elastic IPs found in your AWS account</div>
             </div>
         `;

@@ -90,7 +90,6 @@ export function renderTargetGroups() {
         const emptyCard = `
             <div class="vpc-card" data-empty="true" style="cursor: pointer;">
                 <div class="vpc-card-title">No Target Groups</div>
-                <div class="vpc-card-divider"></div>
                 <div class="vpc-card-info">No Target Groups found in your AWS account</div>
             </div>
         `;
