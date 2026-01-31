@@ -28,7 +28,7 @@ To build and run from source, you need:
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/aws-terminal-sdk.git
+   git clone https://github.com/doguhanniltextra/aws-terminal-sdk.git
    cd aws-terminal-sdk
    ```
 
