@@ -1,8 +1,10 @@
 package main
 
 import (
+	"aws-terminal-sdk-v1/internal/logger"
 	"embed"
 	"log"
+	"log/slog"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -13,6 +15,19 @@ import (
 var assets embed.FS
 
 func main() {
+	// Setup logger
+	if err := logger.Setup(); err != nil {
+		log.Fatalf("Failed to setup logger: %v", err)
+	}
+	slog.Info("Starting Stratusphere application")
+
+	// Panic recovery
+	defer func() {
+		if r := recover(); r != nil {
+			slog.Error("Application panic recovered", "error", r)
+		}
+	}()
+
 	// Create an instance of the app structure
 	app := NewApp()
 
@@ -32,6 +47,7 @@ func main() {
 	})
 
 	if err != nil {
+		slog.Error("Error starting application", "error", err)
 		log.Fatal("Error:", err.Error())
 	}
 }

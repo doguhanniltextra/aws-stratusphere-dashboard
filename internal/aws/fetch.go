@@ -23,14 +23,14 @@ import (
 
 // Client wraps the AWS clients
 type Client struct {
-	ec2Client    *ec2.Client
-	ecsClient    *ecs.Client
-	elbv2Client  *elasticloadbalancingv2.Client
-	iamClient    *iam.Client
-	lambdaClient *lambda.Client
-	rdsClient    *rds.Client
-	s3Client     *s3.Client
-	stsClient    *sts.Client
+	ec2Client    EC2ClientAPI
+	ecsClient    ECSClientAPI
+	elbv2Client  ELBv2ClientAPI
+	iamClient    IAMClientAPI
+	lambdaClient LambdaClientAPI
+	rdsClient    RDSClientAPI
+	s3Client     S3ClientAPI
+	stsClient    STSClientAPI
 	region       string
 	cfg          aws.Config // Store config for Cost Explorer
 }

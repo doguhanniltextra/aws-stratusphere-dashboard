@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log/slog"
 	"os"
 	"strings"
 
@@ -17,10 +18,29 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
+// AWSClient defines the interface for the AWS client wrapper
+type AWSClient interface {
+	FetchVPCs(ctx context.Context) ([]models.VPCInfo, error)
+	FetchEC2Instances(ctx context.Context) ([]models.EC2InstanceInfo, error)
+	FetchECSClusters(ctx context.Context) ([]models.ECSClusterInfo, error)
+	FetchSubnets(ctx context.Context) ([]models.SubnetInfo, error)
+	FetchSecurityGroups(ctx context.Context) ([]models.SecurityGroupInfo, error)
+	FetchNATGateways(ctx context.Context) ([]models.NATGatewayInfo, error)
+	FetchRouteTables(ctx context.Context) ([]models.RouteTableInfo, error)
+	FetchS3Buckets(ctx context.Context) ([]models.S3BucketInfo, error)
+	FetchTargetGroups(ctx context.Context) ([]models.TargetGroupInfo, error)
+	FetchLoadBalancers(ctx context.Context) ([]models.LoadBalancerInfo, error)
+	FetchElasticIPs(ctx context.Context) ([]models.ElasticIPInfo, error)
+	FetchLambdaFunctions(ctx context.Context) ([]models.LambdaFunctionInfo, error)
+	FetchRDSInstances(ctx context.Context) ([]models.RDSInstanceInfo, error)
+	FetchConfiguration(ctx context.Context) (models.ConfigurationInfo, error)
+	VerifyPermissions(ctx context.Context) ([]models.PermissionStatus, error)
+}
+
 // App struct
 type App struct {
 	ctx       context.Context
-	awsClient *aws.Client
+	awsClient AWSClient
 }
 
 // NewApp creates a new App application struct
@@ -35,21 +55,21 @@ func (a *App) startup(ctx context.Context) {
 
 	// Check if credentials exist before initializing AWS client
 	if !auth.CredentialsExist() {
-		println("No credentials found - user will need to configure")
+		slog.Warn("No credentials found - user will need to configure")
 		return
 	}
 
 	// Load credentials and initialize AWS client
 	creds, err := auth.LoadCredentials()
 	if err != nil {
-		println("Failed to load credentials:", err.Error())
+		slog.Error("Failed to load credentials", "error", err)
 		return
 	}
 
 	// Initialize AWS client with loaded credentials
 	client, err := a.initializeAWSClient(ctx, creds)
 	if err != nil {
-		println("Failed to initialize AWS client:", err.Error())
+		slog.Error("Failed to initialize AWS client", "error", err)
 		return
 	}
 	a.awsClient = client
@@ -239,7 +259,7 @@ func (a *App) TestAWSConnection(accessKey, secretKey, region string) error {
 }
 
 // initializeAWSClient creates an AWS client with given credentials
-func (a *App) initializeAWSClient(ctx context.Context, creds *auth.AWSCredentials) (*aws.Client, error) {
+func (a *App) initializeAWSClient(ctx context.Context, creds *auth.AWSCredentials) (AWSClient, error) {
 	// Create AWS config with static credentials
 	cfg, err := config.LoadDefaultConfig(ctx,
 		config.WithRegion(creds.Region),
