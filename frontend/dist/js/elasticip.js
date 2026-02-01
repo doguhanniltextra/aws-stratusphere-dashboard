@@ -57,7 +57,7 @@ export async function fetchElasticIPs() {
         state.vpcGrid.innerHTML = '';
         state.eipTableBody.innerHTML = '';
 
-        const eips = await window.go.main.App.GetElasticIPs();
+        const eips = await window.go.core.App.GetElasticIPs();
         state.loadingBar.classList.add('hidden');
 
         state.setAllElasticIPs(eips || []);

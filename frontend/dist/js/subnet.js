@@ -132,7 +132,7 @@ export async function fetchSubnets() {
         state.vpcGrid.innerHTML = '';
         state.vpcTableBody.innerHTML = '';
 
-        const subnets = await window.go.main.App.GetSubnets();
+        const subnets = await window.go.core.App.GetSubnets();
         state.loadingBar.classList.add('hidden');
 
         state.setAllSubnets(subnets || []);

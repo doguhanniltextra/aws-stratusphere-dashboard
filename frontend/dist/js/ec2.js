@@ -119,7 +119,7 @@ export async function fetchEC2Instances() {
         state.vpcGrid.innerHTML = '';
         state.vpcTableBody.innerHTML = '';
 
-        const instances = await window.go.main.App.GetEC2Instances();
+        const instances = await window.go.core.App.GetEC2Instances();
         state.loadingBar.classList.add('hidden');
 
         state.setAllEC2Instances(instances || []);

@@ -71,7 +71,7 @@ export function initSettings() {
 
         // Fetch config
         try {
-            const config = await window.go.main.App.GetConfiguration();
+            const config = await window.go.core.App.GetConfiguration();
             console.log('Configuration received:', config); // DEBUG
 
             if (config) {
@@ -153,7 +153,7 @@ export function initSettings() {
                 logoutBtn.disabled = true;
                 logoutBtn.textContent = 'Logging out...';
 
-                await window.go.main.App.Logout();
+                await window.go.core.App.Logout();
 
                 // Close settings modal
                 modal.classList.add('hidden');

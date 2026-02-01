@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"aws-terminal-sdk-v1/internal/models"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -14,11 +15,6 @@ import (
 )
 
 // AWSCredentials stores AWS authentication information
-type AWSCredentials struct {
-	AccessKeyID     string `json:"access_key_id"`
-	SecretAccessKey string `json:"secret_access_key"`
-	Region          string `json:"region"`
-}
 
 // GetCredentialsPath returns the path to the credentials file
 func GetCredentialsPath() (string, error) {
@@ -98,7 +94,7 @@ func DecryptCredentials(data []byte) ([]byte, error) {
 	return plaintext, nil
 }
 
-func SaveCredentials(creds *AWSCredentials) error {
+func SaveCredentials(creds *models.AWSCredentials) error {
 	data, err := json.Marshal(creds)
 	if err != nil {
 		return err
@@ -119,7 +115,7 @@ func SaveCredentials(creds *AWSCredentials) error {
 	return os.WriteFile(credPath, encrypted, 0600)
 }
 
-func LoadCredentials() (*AWSCredentials, error) {
+func LoadCredentials() (*models.AWSCredentials, error) {
 	credPath, err := GetCredentialsPath()
 	if err != nil {
 		return nil, err
@@ -138,7 +134,7 @@ func LoadCredentials() (*AWSCredentials, error) {
 	}
 
 	// Unmarshal JSON
-	var creds AWSCredentials
+	var creds models.AWSCredentials
 	if err := json.Unmarshal(decrypted, &creds); err != nil {
 		return nil, err
 	}

@@ -90,7 +90,7 @@ export async function fetchNATGateways() {
         state.vpcGrid.innerHTML = '';
         state.natTableBody.innerHTML = '';
 
-        const nats = await window.go.main.App.GetNATGateways();
+        const nats = await window.go.core.App.GetNATGateways();
         state.loadingBar.classList.add('hidden');
 
         // Store state (need to add to state.js)

@@ -85,7 +85,7 @@ export async function fetchRDSInstances() {
         state.vpcGrid.innerHTML = '';
         state.rdsTableBody.innerHTML = '';
 
-        const dbs = await window.go.main.App.GetRDSInstances();
+        const dbs = await window.go.core.App.GetRDSInstances();
         state.loadingBar.classList.add('hidden');
 
         state.setAllRDSInstances(dbs || []);

@@ -81,7 +81,7 @@ export async function fetchLoadBalancers() {
         state.vpcGrid.innerHTML = '';
         state.lbTableBody.innerHTML = '';
 
-        const lbs = await window.go.main.App.GetLoadBalancers();
+        const lbs = await window.go.core.App.GetLoadBalancers();
         state.loadingBar.classList.add('hidden');
 
         state.setAllLoadBalancers(lbs || []);

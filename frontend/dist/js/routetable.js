@@ -77,7 +77,7 @@ export async function fetchRouteTables() {
         state.vpcGrid.innerHTML = '';
         state.routeTableBody.innerHTML = '';
 
-        const rts = await window.go.main.App.GetRouteTables();
+        const rts = await window.go.core.App.GetRouteTables();
         state.loadingBar.classList.add('hidden');
 
         state.setAllRouteTables(rts || []);

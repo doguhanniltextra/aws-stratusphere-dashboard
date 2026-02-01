@@ -208,7 +208,7 @@ async function fetchVPCs() {
         vpcTableBody.innerHTML = '';
 
         // Fetch VPCs from Go backend
-        const vpcs = await window.go.main.App.GetVPCs();
+        const vpcs = await window.go.core.App.GetVPCs();
 
         // Hide loading
         loadingBar.classList.add('hidden');
@@ -370,7 +370,7 @@ async function fetchEC2Instances() {
         vpcGrid.innerHTML = '';
         vpcTableBody.innerHTML = '';
 
-        const instances = await window.go.main.App.GetEC2Instances();
+        const instances = await window.go.core.App.GetEC2Instances();
 
         loadingBar.classList.add('hidden');
 
@@ -491,7 +491,7 @@ async function fetchECSClusters() {
         vpcGrid.innerHTML = '';
         vpcTableBody.innerHTML = '';
 
-        const clusters = await window.go.main.App.GetECSClusters();
+        const clusters = await window.go.core.App.GetECSClusters();
 
         loadingBar.classList.add('hidden');
 
@@ -636,7 +636,7 @@ async function fetchSubnets() {
         statusText.textContent = 'Fetching subnets from AWS...';
         vpcGrid.innerHTML = '';
         vpcTableBody.innerHTML = '';
-        const subnets = await window.go.main.App.GetSubnets();
+        const subnets = await window.go.core.App.GetSubnets();
 
         loadingBar.classList.add('hidden');
 

@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function checkAdminStatus() {
     try {
-        const config = await window.go.main.App.GetConfiguration();
+        const config = await window.go.core.App.GetConfiguration();
         if (config && config.IsAdmin) {
             const badge = document.getElementById('adminBadge');
             if (badge) {

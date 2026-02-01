@@ -2,7 +2,7 @@
 
 export async function checkCredentials() {
     try {
-        const hasCredentials = await window.go.main.App.CheckCredentials();
+        const hasCredentials = await window.go.core.App.CheckCredentials();
         return hasCredentials;
     } catch (error) {
         console.error('Error checking credentials:', error);
@@ -26,7 +26,7 @@ export function hideSetupScreen() {
 
 export async function testConnection(accessKey, secretKey, region) {
     try {
-        await window.go.main.App.TestAWSConnection(accessKey, secretKey, region);
+        await window.go.core.App.TestAWSConnection(accessKey, secretKey, region);
         return { success: true };
     } catch (error) {
         return { success: false, error: error.message || 'Connection failed' };
@@ -35,7 +35,7 @@ export async function testConnection(accessKey, secretKey, region) {
 
 export async function saveCredentials(accessKey, secretKey, region) {
     try {
-        await window.go.main.App.SaveAWSCredentials(accessKey, secretKey, region);
+        await window.go.core.App.SaveAWSCredentials(accessKey, secretKey, region);
         return { success: true };
     } catch (error) {
         return { success: false, error: error.message || 'Failed to save credentials' };

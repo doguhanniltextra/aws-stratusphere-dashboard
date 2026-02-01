@@ -71,7 +71,7 @@ export async function fetchTargetGroups() {
         state.vpcGrid.innerHTML = '';
         state.tgTableBody.innerHTML = '';
 
-        const tgs = await window.go.main.App.GetTargetGroups();
+        const tgs = await window.go.core.App.GetTargetGroups();
         state.loadingBar.classList.add('hidden');
 
         state.setAllTargetGroups(tgs || []);

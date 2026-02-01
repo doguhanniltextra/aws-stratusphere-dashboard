@@ -74,7 +74,7 @@ export async function fetchS3Buckets() {
         state.vpcGrid.innerHTML = '';
         state.s3TableBody.innerHTML = '';
 
-        const buckets = await window.go.main.App.GetS3Buckets();
+        const buckets = await window.go.core.App.GetS3Buckets();
         state.loadingBar.classList.add('hidden');
 
         state.setAllS3Buckets(buckets || []);

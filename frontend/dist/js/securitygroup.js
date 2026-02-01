@@ -121,7 +121,7 @@ export async function fetchSecurityGroups() {
         state.vpcGrid.innerHTML = '';
         state.securityGroupTableBody.innerHTML = '';
 
-        const securityGroups = await window.go.main.App.GetSecurityGroups();
+        const securityGroups = await window.go.core.App.GetSecurityGroups();
         state.loadingBar.classList.add('hidden');
 
         state.setAllSecurityGroups(securityGroups || []);

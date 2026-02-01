@@ -69,7 +69,7 @@ export async function fetchLambdaFunctions() {
         state.vpcGrid.innerHTML = '';
         state.lambdaTableBody.innerHTML = '';
 
-        const fns = await window.go.main.App.GetLambdaFunctions();
+        const fns = await window.go.core.App.GetLambdaFunctions();
         state.loadingBar.classList.add('hidden');
 
         state.setAllLambdaFunctions(fns || []);

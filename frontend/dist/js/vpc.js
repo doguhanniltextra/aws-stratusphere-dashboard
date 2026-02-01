@@ -111,7 +111,7 @@ export async function fetchVPCs() {
         state.vpcTableBody.innerHTML = '';
 
         // Fetch VPCs from Go backend
-        const vpcs = await window.go.main.App.GetVPCs();
+        const vpcs = await window.go.core.App.GetVPCs();
 
         // Hide loading
         state.loadingBar.classList.add('hidden');

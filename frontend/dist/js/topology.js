@@ -506,18 +506,18 @@ export async function showTopology() {
         console.log('Fetching data from backend...');
 
         // Check if window.go is available
-        if (!window.go || !window.go.main || !window.go.main.App) {
+        if (!window.go || !window.go.core || !window.go.core.App) {
             throw new Error('Wails backend not available. Make sure the app is running.');
         }
 
         const [vpcs, subnets, ec2s, rdss, lambdas, lbs, s3s] = await Promise.all([
-            window.go.main.App.GetVPCs().catch(e => { console.error('VPC fetch error:', e); return []; }),
-            window.go.main.App.GetSubnets().catch(e => { console.error('Subnet fetch error:', e); return []; }),
-            window.go.main.App.GetEC2Instances().catch(e => { console.error('EC2 fetch error:', e); return []; }),
-            window.go.main.App.GetRDSInstances().catch(e => { console.error('RDS fetch error:', e); return []; }),
-            window.go.main.App.GetLambdaFunctions().catch(e => { console.error('Lambda fetch error:', e); return []; }),
-            window.go.main.App.GetLoadBalancers().catch(e => { console.error('LB fetch error:', e); return []; }),
-            window.go.main.App.GetS3Buckets().catch(e => { console.error('S3 fetch error:', e); return []; })
+            window.go.core.App.GetVPCs().catch(e => { console.error('VPC fetch error:', e); return []; }),
+            window.go.core.App.GetSubnets().catch(e => { console.error('Subnet fetch error:', e); return []; }),
+            window.go.core.App.GetEC2Instances().catch(e => { console.error('EC2 fetch error:', e); return []; }),
+            window.go.core.App.GetRDSInstances().catch(e => { console.error('RDS fetch error:', e); return []; }),
+            window.go.core.App.GetLambdaFunctions().catch(e => { console.error('Lambda fetch error:', e); return []; }),
+            window.go.core.App.GetLoadBalancers().catch(e => { console.error('LB fetch error:', e); return []; }),
+            window.go.core.App.GetS3Buckets().catch(e => { console.error('S3 fetch error:', e); return []; })
         ]);
 
         console.log('Raw data received:');

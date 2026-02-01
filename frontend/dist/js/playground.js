@@ -910,7 +910,7 @@ async function generateTerraform() {
     try {
         // Call backend to generate Terraform code
         const resourcesJson = JSON.stringify(InfrastructureBuilder.resources);
-        const terraformCode = await window.go.main.App.GenerateTerraform(resourcesJson);
+        const terraformCode = await window.go.core.App.GenerateTerraform(resourcesJson);
 
         // Store full content and reset page
         InfrastructureBuilder.terraformContent = terraformCode;
@@ -977,7 +977,7 @@ async function saveTerraformToFile() {
         const content = InfrastructureBuilder.terraformContent;
         if (!content) return;
 
-        const filename = await window.go.main.App.SaveTerraformFile(content);
+        const filename = await window.go.core.App.SaveTerraformFile(content);
 
         if (filename) {
             const btn = document.getElementById('saveFileTerraformBtn');

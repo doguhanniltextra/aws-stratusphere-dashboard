@@ -85,7 +85,7 @@ export async function fetchECSClusters() {
         state.vpcGrid.innerHTML = '';
         state.vpcTableBody.innerHTML = '';
 
-        const clusters = await window.go.main.App.GetECSClusters();
+        const clusters = await window.go.core.App.GetECSClusters();
         state.loadingBar.classList.add('hidden');
 
         state.setAllVPCs(clusters || []);
