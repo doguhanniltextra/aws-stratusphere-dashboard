@@ -1,5 +1,43 @@
 export namespace models {
 	
+	export class SecurityFinding {
+	    title: string;
+	    severity: string;
+	    resource_id: string;
+	    category: string;
+	    updated_at: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new SecurityFinding(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.title = source["title"];
+	        this.severity = source["severity"];
+	        this.resource_id = source["resource_id"];
+	        this.category = source["category"];
+	        this.updated_at = source["updated_at"];
+	    }
+	}
+	export class TrustedAdvisorRecommendation {
+	    check_name: string;
+	    category: string;
+	    status: string;
+	    estimated_savings: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TrustedAdvisorRecommendation(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.check_name = source["check_name"];
+	        this.category = source["category"];
+	        this.status = source["status"];
+	        this.estimated_savings = source["estimated_savings"];
+	    }
+	}
 	export class AccountHomeInfo {
 	    account_id: string;
 	    account_alias: string;
@@ -23,6 +61,13 @@ export namespace models {
 	    lambda_usage: number;
 	    s3_limit: number;
 	    s3_usage: number;
+	    security_hub_enabled: boolean;
+	    support_access_enabled: boolean;
+	    critical_findings: number;
+	    high_findings: number;
+	    potential_savings: number;
+	    recommendations: TrustedAdvisorRecommendation[];
+	    top_findings: SecurityFinding[];
 	
 	    static createFrom(source: any = {}) {
 	        return new AccountHomeInfo(source);
@@ -52,7 +97,32 @@ export namespace models {
 	        this.lambda_usage = source["lambda_usage"];
 	        this.s3_limit = source["s3_limit"];
 	        this.s3_usage = source["s3_usage"];
+	        this.security_hub_enabled = source["security_hub_enabled"];
+	        this.support_access_enabled = source["support_access_enabled"];
+	        this.critical_findings = source["critical_findings"];
+	        this.high_findings = source["high_findings"];
+	        this.potential_savings = source["potential_savings"];
+	        this.recommendations = this.convertValues(source["recommendations"], TrustedAdvisorRecommendation);
+	        this.top_findings = this.convertValues(source["top_findings"], SecurityFinding);
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class ConfigurationInfo {
 	    Region: string;
@@ -378,6 +448,7 @@ export namespace models {
 	        this.Encryption = source["Encryption"];
 	    }
 	}
+	
 	export class SecurityGroupRule {
 	    Protocol: string;
 	    FromPort: number;
@@ -493,6 +564,7 @@ export namespace models {
 	        this.HealthCheckPath = source["HealthCheckPath"];
 	    }
 	}
+	
 	export class VPCInfo {
 	    ID: string;
 	    Name: string;

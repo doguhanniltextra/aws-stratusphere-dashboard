@@ -61,6 +61,22 @@ function renderHome(info) {
                             <span class="label">MFA Status</span>
                             <span class="${mfaStatusClass}">${mfaStatusText}</span>
                         </div>
+                        <div class="info-divider"></div>
+                        ${!info.security_hub_enabled ? `
+                            <div class="service-action-required">
+                                <span class="label">Security Hub</span>
+                                <span class="value text-warning">Enable Required</span>
+                            </div>
+                        ` : `
+                            <div class="info-row">
+                                <span class="label">Critical Findings</span>
+                                <span class="value ${info.critical_findings > 0 ? 'text-danger' : ''}">${info.critical_findings || 0}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">High Findings</span>
+                                <span class="value ${info.high_findings > 0 ? 'text-warning' : ''}">${info.high_findings || 0}</span>
+                            </div>
+                        `}
                     </div>
                 </div>
 
@@ -87,6 +103,19 @@ function renderHome(info) {
                                 <span class="value">$${info.cost_last_month.toFixed(2)}</span>
                             </div>
                         </div>
+                        ${info.potential_savings > 0 ? `
+                        <div class="cost-divider"></div>
+                        <div class="cost-savings-summary">
+                            <span class="label">Potential Savings</span>
+                            <span class="value success">$${info.potential_savings.toFixed(2)}/mo</span>
+                        </div>
+                        ` : !info.support_access_enabled ? `
+                        <div class="cost-divider"></div>
+                        <div class="plan-notice">
+                            <span class="label">Savings check:</span>
+                            <span class="value">Business Plan required</span>
+                        </div>
+                        ` : ''}
                     </div>
                 </div>
 

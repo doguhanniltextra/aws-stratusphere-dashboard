@@ -22,8 +22,11 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	"github.com/aws/aws-sdk-go-v2/service/rds"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/securityhub"
+	securityhubTypes "github.com/aws/aws-sdk-go-v2/service/securityhub/types"
 	"github.com/aws/aws-sdk-go-v2/service/servicequotas"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
+	"github.com/aws/aws-sdk-go-v2/service/support"
 
 	"aws-terminal-sdk-v1/internal/models"
 )
@@ -38,19 +41,21 @@ func safeString(s *string) string {
 
 // Client wraps the AWS clients
 type Client struct {
-	ec2Client    EC2ClientAPI
-	ecsClient    ECSClientAPI
-	elbv2Client  ELBv2ClientAPI
-	iamClient    IAMClientAPI
-	lambdaClient LambdaClientAPI
-	rdsClient    RDSClientAPI
-	s3Client     S3ClientAPI
-	stsClient    STSClientAPI
-	cwClient     CloudWatchClientAPI
-	ceClient     CostExplorerClientAPI
-	sqClient     ServiceQuotasClientAPI
-	region       string
-	cfg          aws.Config // Store config for Cost Explorer
+	ec2Client     EC2ClientAPI
+	ecsClient     ECSClientAPI
+	elbv2Client   ELBv2ClientAPI
+	iamClient     IAMClientAPI
+	lambdaClient  LambdaClientAPI
+	rdsClient     RDSClientAPI
+	s3Client      S3ClientAPI
+	stsClient     STSClientAPI
+	cwClient      CloudWatchClientAPI
+	ceClient      CostExplorerClientAPI
+	sqClient      ServiceQuotasClientAPI
+	shClient      SecurityHubClientAPI
+	supportClient SupportClientAPI
+	region        string
+	cfg           aws.Config // Store config for Cost Explorer
 }
 
 // NewClient creates a new AWS client with default configuration
@@ -61,38 +66,42 @@ func NewClient(ctx context.Context) (*Client, error) {
 	}
 
 	return &Client{
-		ec2Client:    ec2.NewFromConfig(cfg),
-		ecsClient:    ecs.NewFromConfig(cfg),
-		elbv2Client:  elasticloadbalancingv2.NewFromConfig(cfg),
-		iamClient:    iam.NewFromConfig(cfg),
-		lambdaClient: lambda.NewFromConfig(cfg),
-		rdsClient:    rds.NewFromConfig(cfg),
-		s3Client:     s3.NewFromConfig(cfg),
-		stsClient:    sts.NewFromConfig(cfg),
-		cwClient:     cloudwatch.NewFromConfig(cfg),
-		ceClient:     costexplorer.NewFromConfig(cfg),
-		sqClient:     servicequotas.NewFromConfig(cfg),
-		region:       cfg.Region,
-		cfg:          cfg,
+		ec2Client:     ec2.NewFromConfig(cfg),
+		ecsClient:     ecs.NewFromConfig(cfg),
+		elbv2Client:   elasticloadbalancingv2.NewFromConfig(cfg),
+		iamClient:     iam.NewFromConfig(cfg),
+		lambdaClient:  lambda.NewFromConfig(cfg),
+		rdsClient:     rds.NewFromConfig(cfg),
+		s3Client:      s3.NewFromConfig(cfg),
+		stsClient:     sts.NewFromConfig(cfg),
+		cwClient:      cloudwatch.NewFromConfig(cfg),
+		ceClient:      costexplorer.NewFromConfig(cfg),
+		sqClient:      servicequotas.NewFromConfig(cfg),
+		shClient:      securityhub.NewFromConfig(cfg),
+		supportClient: support.NewFromConfig(cfg),
+		region:        cfg.Region,
+		cfg:           cfg,
 	}, nil
 }
 
 // NewClientWithConfig creates a new AWS client with provided configuration
 func NewClientWithConfig(ctx context.Context, cfg aws.Config) (*Client, error) {
 	return &Client{
-		ec2Client:    ec2.NewFromConfig(cfg),
-		ecsClient:    ecs.NewFromConfig(cfg),
-		elbv2Client:  elasticloadbalancingv2.NewFromConfig(cfg),
-		iamClient:    iam.NewFromConfig(cfg),
-		lambdaClient: lambda.NewFromConfig(cfg),
-		rdsClient:    rds.NewFromConfig(cfg),
-		s3Client:     s3.NewFromConfig(cfg),
-		stsClient:    sts.NewFromConfig(cfg),
-		cwClient:     cloudwatch.NewFromConfig(cfg),
-		ceClient:     costexplorer.NewFromConfig(cfg),
-		sqClient:     servicequotas.NewFromConfig(cfg),
-		region:       cfg.Region,
-		cfg:          cfg,
+		ec2Client:     ec2.NewFromConfig(cfg),
+		ecsClient:     ecs.NewFromConfig(cfg),
+		elbv2Client:   elasticloadbalancingv2.NewFromConfig(cfg),
+		iamClient:     iam.NewFromConfig(cfg),
+		lambdaClient:  lambda.NewFromConfig(cfg),
+		rdsClient:     rds.NewFromConfig(cfg),
+		s3Client:      s3.NewFromConfig(cfg),
+		stsClient:     sts.NewFromConfig(cfg),
+		cwClient:      cloudwatch.NewFromConfig(cfg),
+		ceClient:      costexplorer.NewFromConfig(cfg),
+		sqClient:      servicequotas.NewFromConfig(cfg),
+		shClient:      securityhub.NewFromConfig(cfg),
+		supportClient: support.NewFromConfig(cfg),
+		region:        cfg.Region,
+		cfg:           cfg,
 	}, nil
 }
 
@@ -616,7 +625,124 @@ func (c *Client) FetchAccountHomeInfo(ctx context.Context) (*models.AccountHomeI
 	info.LambdaLimit = c.getQuota(ctx, "lambda", "L-B99A9384", 1000)
 	info.S3Limit = c.getQuota(ctx, "s3", "L-DC2B2D3D", 100)
 
+	// 6. Security Findings (Critical & High)
+	findings, err := c.FetchSecurityFindings(ctx)
+	info.TopFindings = findings
+	info.SecurityHubEnabled = true
+	if err != nil && strings.Contains(err.Error(), "SubscriptionRequiredException") {
+		info.SecurityHubEnabled = false
+	}
+
+	for _, f := range findings {
+		if f.Severity == "CRITICAL" {
+			info.CriticalFindings++
+		} else if f.Severity == "HIGH" {
+			info.HighFindings++
+		}
+	}
+
+	// 7. Trusted Advisor Recommendations
+	recs, err := c.FetchTrustedAdvisorRecommendations(ctx)
+	info.Recommendations = recs
+	info.SupportAccessEnabled = true
+	if err != nil && (strings.Contains(err.Error(), "SubscriptionRequiredException") || strings.Contains(err.Error(), "AccessDenied")) {
+		info.SupportAccessEnabled = false
+	}
+
+	for _, r := range recs {
+		if r.Category == "Cost Optimization" && r.Status == "Red" {
+			info.PotentialSavings += r.EstimatedSavings
+		}
+	}
+
 	return info, nil
+}
+
+// FetchSecurityFindings retrieves the top high-severity security issues
+func (c *Client) FetchSecurityFindings(ctx context.Context) ([]models.SecurityFinding, error) {
+	// Filter for CRITICAL and HIGH severity
+	input := &securityhub.GetFindingsInput{
+		Filters: &securityhubTypes.AwsSecurityFindingFilters{
+			SeverityLabel: []securityhubTypes.StringFilter{
+				{Value: aws.String("CRITICAL"), Comparison: "EQUALS"},
+				{Value: aws.String("HIGH"), Comparison: "EQUALS"},
+			},
+			RecordState: []securityhubTypes.StringFilter{
+				{Value: aws.String("ACTIVE"), Comparison: "EQUALS"},
+			},
+		},
+		MaxResults: aws.Int32(5), // Top 5
+	}
+
+	output, err := c.shClient.GetFindings(ctx, input)
+	if err != nil {
+		fmt.Printf("Warning: Could not fetch Security Hub findings: %v\n", err)
+		return []models.SecurityFinding{}, err // Return error to be caught by caller
+	}
+
+	findings := make([]models.SecurityFinding, 0, len(output.Findings))
+	for _, f := range output.Findings {
+		resourceID := "Multiple Resources"
+		if len(f.Resources) > 0 {
+			resourceID = safeString(f.Resources[0].Id)
+		}
+
+		findings = append(findings, models.SecurityFinding{
+			Title:      safeString(f.Title),
+			Severity:   string(f.Severity.Label),
+			ResourceID: resourceID,
+			Category:   safeString(f.Description),
+			UpdatedAt:  safeString(f.UpdatedAt),
+		})
+	}
+
+	return findings, nil
+}
+
+// FetchTrustedAdvisorRecommendations fetches key cost and security tips
+func (c *Client) FetchTrustedAdvisorRecommendations(ctx context.Context) ([]models.TrustedAdvisorRecommendation, error) {
+	// We check a subset of known high-value checks
+	// Note: Fully dynamic listing requires advanced logic, we target common cost winners
+	checkIDs := []string{
+		"eW7uY9STB8", // Idle Load Balancers
+		"DAvU99Dc4C", // Unused EBS Volumes
+		"Q7v9un9STB", // Underutilized EC2 Instances (Requires Business Support)
+	}
+
+	recommendations := make([]models.TrustedAdvisorRecommendation, 0)
+
+	for _, id := range checkIDs {
+		output, err := c.supportClient.DescribeTrustedAdvisorCheckResult(ctx, &support.DescribeTrustedAdvisorCheckResultInput{
+			CheckId: aws.String(id),
+		})
+
+		if err != nil {
+			// Handle AccessDenied for basic support plans
+			continue
+		}
+
+		if output.Result == nil || output.Result.Status == aws.String("Green") {
+			continue
+		}
+
+		// Basic mapping of check IDs to names for this demo
+		name := "Resource Optimization"
+		category := "Cost Optimization"
+		if id == "eW7uY9STB8" {
+			name = "Idle Load Balancers"
+		} else if id == "DAvU99Dc4C" {
+			name = "Unused EBS Volumes"
+		}
+
+		recommendations = append(recommendations, models.TrustedAdvisorRecommendation{
+			CheckName:        name,
+			Category:         category,
+			Status:           safeString(output.Result.Status),
+			EstimatedSavings: 0, // In real world, parse from output.Result.Resources metadata
+		})
+	}
+
+	return recommendations, nil
 }
 
 // getUsageCount is a helper to count active resources

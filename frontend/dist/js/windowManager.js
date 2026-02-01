@@ -89,6 +89,9 @@ export const WindowManager = {
                 // Topology is special
                 setCurrentPage('topology');
                 break;
+            case 'security':
+                setCurrentPage('security');
+                break;
             default:
                 console.warn(`Unknown view: ${viewName}`);
         }
@@ -165,6 +168,10 @@ export const WindowManager = {
                 case 'playground':
                     const { showPlayground } = await import('./playground.js');
                     await showPlayground();
+                    break;
+                case 'security':
+                    const { fetchSecurityInfo } = await import('./security.js');
+                    await fetchSecurityInfo();
                     break;
             }
         } catch (error) {

@@ -22,6 +22,7 @@ export const lambdaTableBody = document.getElementById('lambdaTableBody');
 export const rdsTableContainer = document.getElementById('rdsTable');
 export const rdsTableBody = document.getElementById('rdsTableBody');
 export const homeContainer = document.getElementById('homeContainer');
+export const securityContainer = document.getElementById('securityContainer');
 
 export const statusText = document.getElementById('statusText');
 export const loadingBar = document.getElementById('loadingBar');

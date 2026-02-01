@@ -130,6 +130,25 @@
     white-space: nowrap;
 }
 
+.info-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 4px 0;
+    opacity: 0.5;
+}
+
+.text-danger {
+    color: #ef4444;
+}
+
+.text-warning {
+    color: #f59e0b;
+}
+
+.success {
+    color: #10b981;
+}
+
 .status-pill {
     font-size: 0.8rem;
     padding: 4px 12px;
@@ -145,6 +164,33 @@
 .status-pill.warning {
     background: rgba(245, 158, 11, 0.1);
     color: #f59e0b;
+}
+
+.service-action-required,
+.plan-notice {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.service-action-required .label,
+.plan-notice .label {
+    color: var(--text-muted);
+}
+
+.service-action-required .value {
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 2px 8px;
+    background: rgba(245, 158, 11, 0.1);
+    border-radius: 4px;
+}
+
+.plan-notice .value {
+    font-size: 0.75rem;
+    font-style: italic;
+    color: var(--text-muted);
 }
 
 /* Costs Styling */
@@ -181,6 +227,26 @@
 .cost-sub-item .value {
     font-size: 1.1rem;
     font-weight: 600;
+}
+
+.cost-savings-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(16, 185, 129, 0.05);
+    border-radius: 8px;
+    border: 1px dashed rgba(16, 185, 129, 0.2);
+}
+
+.cost-savings-summary .label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.cost-savings-summary .value {
+    font-weight: 700;
+    color: #10b981;
 }
 
 .limit-item {

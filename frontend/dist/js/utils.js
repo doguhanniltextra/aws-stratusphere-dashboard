@@ -144,9 +144,11 @@ export function switchView(viewName) {
         section.classList.add('hidden');
     });
 
-    if (state.currentPage === 'home') {
-        if (state.homeContainer) state.homeContainer.classList.remove('hidden');
-        // Hide card/table toggle for home
+    if (state.currentPage === 'home' || state.currentPage === 'security') {
+        if (state.currentPage === 'home' && state.homeContainer) state.homeContainer.classList.remove('hidden');
+        if (state.currentPage === 'security' && state.securityContainer) state.securityContainer.classList.remove('hidden');
+
+        // Hide card/table toggle for home and security
         state.cardViewBtn.style.display = 'none';
         state.tableViewBtn.style.display = 'none';
         return;

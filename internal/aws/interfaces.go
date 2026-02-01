@@ -12,8 +12,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	"github.com/aws/aws-sdk-go-v2/service/rds"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/securityhub"
 	"github.com/aws/aws-sdk-go-v2/service/servicequotas"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
+	"github.com/aws/aws-sdk-go-v2/service/support"
 )
 
 // EC2ClientAPI defines the interface for the EC2 client
@@ -84,4 +86,15 @@ type STSClientAPI interface {
 // ServiceQuotasClientAPI defines the interface for the Service Quotas client
 type ServiceQuotasClientAPI interface {
 	GetServiceQuota(ctx context.Context, params *servicequotas.GetServiceQuotaInput, optFns ...func(*servicequotas.Options)) (*servicequotas.GetServiceQuotaOutput, error)
+}
+
+// SecurityHubClientAPI defines the interface for the Security Hub client
+type SecurityHubClientAPI interface {
+	GetFindings(ctx context.Context, params *securityhub.GetFindingsInput, optFns ...func(*securityhub.Options)) (*securityhub.GetFindingsOutput, error)
+}
+
+// SupportClientAPI defines the interface for the AWS Support client
+type SupportClientAPI interface {
+	DescribeTrustedAdvisorCheckResult(ctx context.Context, params *support.DescribeTrustedAdvisorCheckResultInput, optFns ...func(*support.Options)) (*support.DescribeTrustedAdvisorCheckResultOutput, error)
+	DescribeTrustedAdvisorChecks(ctx context.Context, params *support.DescribeTrustedAdvisorChecksInput, optFns ...func(*support.Options)) (*support.DescribeTrustedAdvisorChecksOutput, error)
 }

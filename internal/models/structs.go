@@ -130,6 +130,25 @@ type VPCInfo struct {
 	InstanceTenancy string
 }
 
+// SecurityFinding represents a security issue from AWS Security Hub
+// Note: Security Hub findings update perodically (12-18h).
+type SecurityFinding struct {
+	Title      string `json:"title"`
+	Severity   string `json:"severity"`    // CRITICAL, HIGH, MEDIUM, LOW
+	ResourceID string `json:"resource_id"` // Affected resource
+	Category   string `json:"category"`
+	UpdatedAt  string `json:"updated_at"` // Crucial due to 12-18h refresh lag
+}
+
+// TrustedAdvisorRecommendation represents a cost or security tip
+// Note: Full checks require Business/Enterprise support plan.
+type TrustedAdvisorRecommendation struct {
+	CheckName        string  `json:"check_name"`
+	Category         string  `json:"category"` // Cost Optimization, Security, etc.
+	Status           string  `json:"status"`   // Red (Action Required), Yellow (Warning)
+	EstimatedSavings float64 `json:"estimated_savings"`
+}
+
 // AccountHomeInfo aggregates metadata and cost information for the Home dashboard
 type AccountHomeInfo struct {
 	AccountID    string `json:"account_id"`
@@ -157,4 +176,13 @@ type AccountHomeInfo struct {
 	LambdaUsage   int `json:"lambda_usage"`
 	S3Limit       int `json:"s3_limit"`
 	S3Usage       int `json:"s3_usage"`
+
+	// Security & Compliance Summary
+	SecurityHubEnabled   bool                           `json:"security_hub_enabled"`
+	SupportAccessEnabled bool                           `json:"support_access_enabled"`
+	CriticalFindings     int                            `json:"critical_findings"`
+	HighFindings         int                            `json:"high_findings"`
+	PotentialSavings     float64                        `json:"potential_savings"`
+	Recommendations      []TrustedAdvisorRecommendation `json:"recommendations"`
+	TopFindings          []SecurityFinding              `json:"top_findings"`
 }

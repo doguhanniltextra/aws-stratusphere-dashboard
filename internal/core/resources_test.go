@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"aws-terminal-sdk-v1/internal/models"
@@ -131,4 +132,23 @@ func TestAppGetECSMetrics(t *testing.T) {
 	assert.NotNil(t, metrics)
 	// GetECSMetrics calls FetchResourceMetrics 4 times (CPU, Memory, NetworkIn, NetworkOut)
 	mockClient.AssertNumberOfCalls(t, "FetchResourceMetrics", 4)
+}
+
+func TestAppGetVPCs_Error(t *testing.T) {
+	mockClient := new(MockAWSClient)
+	app := &App{awsClient: mockClient}
+
+	mockClient.On("FetchVPCs", mock.Anything).Return(([]models.VPCInfo)(nil), errors.New("failed"))
+
+	vpcs, err := app.GetVPCs()
+	assert.Error(t, err)
+	assert.Nil(t, vpcs)
+}
+
+func TestAppGetEC2Instances_NilClient(t *testing.T) {
+	app := &App{awsClient: nil}
+
+	instances, err := app.GetEC2Instances()
+	assert.NoError(t, err)
+	assert.Nil(t, instances)
 }
