@@ -93,6 +93,14 @@ func (m *MockAWSClient) FetchResourceMetrics(ctx context.Context, ns, mName stri
 	return args.Get(0).(*models.ResourceMetrics), args.Error(1)
 }
 
+func (m *MockAWSClient) FetchAccountHomeInfo(ctx context.Context) (*models.AccountHomeInfo, error) {
+	args := m.Called(ctx)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*models.AccountHomeInfo), args.Error(1)
+}
+
 func (m *MockAWSClient) VerifyPermissions(ctx context.Context) ([]models.PermissionStatus, error) {
 	args := m.Called(ctx)
 	return args.Get(0).([]models.PermissionStatus), args.Error(1)

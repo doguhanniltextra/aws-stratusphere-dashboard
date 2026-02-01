@@ -156,3 +156,11 @@ func (a *App) GetConfiguration() (models.ConfigurationInfo, error) {
 	}
 	return a.awsClient.FetchConfiguration(context.Background())
 }
+
+// GetAccountHomeInfo returns aggregated account information for the dashboard
+func (a *App) GetAccountHomeInfo() (*models.AccountHomeInfo, error) {
+	if a.awsClient == nil {
+		return nil, fmt.Errorf("AWS client not initialized")
+	}
+	return a.awsClient.FetchAccountHomeInfo(context.Background())
+}

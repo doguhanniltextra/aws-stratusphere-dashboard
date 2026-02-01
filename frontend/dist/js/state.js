@@ -21,6 +21,7 @@ export const lambdaTableContainer = document.getElementById('lambdaTable');
 export const lambdaTableBody = document.getElementById('lambdaTableBody');
 export const rdsTableContainer = document.getElementById('rdsTable');
 export const rdsTableBody = document.getElementById('rdsTableBody');
+export const homeContainer = document.getElementById('homeContainer');
 
 export const statusText = document.getElementById('statusText');
 export const loadingBar = document.getElementById('loadingBar');
@@ -29,7 +30,7 @@ export const searchInput = document.getElementById('searchInput');
 export const cardViewBtn = document.getElementById('cardViewBtn');
 export const tableViewBtn = document.getElementById('tableViewBtn');
 
-export let currentPage = 'vpc-list';
+export let currentPage = 'home';
 export let currentView = 'cards'; // 'cards' or 'table'
 export let allVPCs = []; // Store all VPCs for filtering
 export let filteredVPCs = []; // Currently displayed VPCs

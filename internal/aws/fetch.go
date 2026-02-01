@@ -10,6 +10,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	cwTypes "github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
+	"github.com/aws/aws-sdk-go-v2/service/costexplorer"
+	costexplorerTypes "github.com/aws/aws-sdk-go-v2/service/costexplorer/types"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	ecsTypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
@@ -19,10 +21,19 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	"github.com/aws/aws-sdk-go-v2/service/rds"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/servicequotas"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 
 	"aws-terminal-sdk-v1/internal/models"
 )
+
+// safeString safely dereferences a string pointer
+func safeString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
 
 // Client wraps the AWS clients
 type Client struct {
@@ -35,6 +46,8 @@ type Client struct {
 	s3Client     S3ClientAPI
 	stsClient    STSClientAPI
 	cwClient     CloudWatchClientAPI
+	ceClient     CostExplorerClientAPI
+	sqClient     ServiceQuotasClientAPI
 	region       string
 	cfg          aws.Config // Store config for Cost Explorer
 }
@@ -56,6 +69,8 @@ func NewClient(ctx context.Context) (*Client, error) {
 		s3Client:     s3.NewFromConfig(cfg),
 		stsClient:    sts.NewFromConfig(cfg),
 		cwClient:     cloudwatch.NewFromConfig(cfg),
+		ceClient:     costexplorer.NewFromConfig(cfg),
+		sqClient:     servicequotas.NewFromConfig(cfg),
 		region:       cfg.Region,
 		cfg:          cfg,
 	}, nil
@@ -73,6 +88,8 @@ func NewClientWithConfig(ctx context.Context, cfg aws.Config) (*Client, error) {
 		s3Client:     s3.NewFromConfig(cfg),
 		stsClient:    sts.NewFromConfig(cfg),
 		cwClient:     cloudwatch.NewFromConfig(cfg),
+		ceClient:     costexplorer.NewFromConfig(cfg),
+		sqClient:     servicequotas.NewFromConfig(cfg),
 		region:       cfg.Region,
 		cfg:          cfg,
 	}, nil
@@ -531,4 +548,100 @@ func (c *Client) FetchResourceMetrics(ctx context.Context, namespace, metricName
 	}
 
 	return metrics, nil
+}
+
+// FetchAccountHomeInfo gathers comprehensive account metadata and cost information
+func (c *Client) FetchAccountHomeInfo(ctx context.Context) (*models.AccountHomeInfo, error) {
+	info := &models.AccountHomeInfo{
+		Region:   c.region,
+		Currency: "USD",
+	}
+
+	// 1. Get Caller Identity (AccountID, UserARN)
+	identity, err := c.stsClient.GetCallerIdentity(ctx, &sts.GetCallerIdentityInput{})
+	if err == nil && identity != nil {
+		info.AccountID = safeString(identity.Account)
+		info.UserARN = safeString(identity.Arn)
+	}
+
+	// 2. Get Account Alias
+	aliases, err := c.iamClient.ListAccountAliases(ctx, &iam.ListAccountAliasesInput{})
+	if err == nil && aliases != nil && len(aliases.AccountAliases) > 0 {
+		info.AccountAlias = aliases.AccountAliases[0]
+	}
+
+	// 3. MFA Status
+	mfa, err := c.iamClient.ListMFADevices(ctx, &iam.ListMFADevicesInput{})
+	if err == nil && mfa != nil {
+		info.MFAEnabled = len(mfa.MFADevices) > 0
+	}
+
+	// 4. Costs (Yesterday, MTD, Last Month)
+	now := time.Now().UTC()
+	today := now.Format("2006-01-02")
+	yesterday := now.AddDate(0, 0, -1).Format("2006-01-02")
+	firstOfMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC).Format("2006-01-02")
+
+	// Dates for last month
+	lastMonthTime := now.AddDate(0, -1, 0)
+	lastMonthStart := time.Date(lastMonthTime.Year(), lastMonthTime.Month(), 1, 0, 0, 0, 0, time.UTC).Format("2006-01-02")
+	lastMonthEnd := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC).Format("2006-01-02")
+
+	// Yesterday's Cost
+	yCost, _ := c.getCost(ctx, yesterday, today)
+	info.CostYesterday = yCost
+
+	// MTD Cost
+	mtdCost, _ := c.getCost(ctx, firstOfMonth, today)
+	info.CostMonthToDate = mtdCost
+
+	// Last Month Cost
+	lmCost, _ := c.getCost(ctx, lastMonthStart, lastMonthEnd)
+	info.CostLastMonth = lmCost
+
+	// 5. Service Quotas (VPC, EC2)
+	// VPC Limit (Service Code: vpc, Quota Code: L-F678F1CE)
+	info.VPCLimit = 5 // Default
+	vpcQuota, err := c.sqClient.GetServiceQuota(ctx, &servicequotas.GetServiceQuotaInput{
+		ServiceCode: aws.String("vpc"),
+		QuotaCode:   aws.String("L-F678F1CE"),
+	})
+	if err == nil && vpcQuota != nil && vpcQuota.Quota != nil {
+		info.VPCLimit = int(*vpcQuota.Quota.Value)
+	}
+
+	return info, nil
+}
+
+// getCost is a helper to fetch blended costs for a specific range
+func (c *Client) getCost(ctx context.Context, start, end string) (float64, error) {
+	if start == end {
+		return 0, nil
+	}
+
+	output, err := c.ceClient.GetCostAndUsage(ctx, &costexplorer.GetCostAndUsageInput{
+		TimePeriod: &costexplorerTypes.DateInterval{
+			Start: aws.String(start),
+			End:   aws.String(end),
+		},
+		Granularity: costexplorerTypes.GranularityDaily,
+		Metrics:     []string{"BlendedCost"},
+	})
+
+	if err != nil || len(output.ResultsByTime) == 0 {
+		return 0, err
+	}
+
+	var totalCost float64
+	for _, result := range output.ResultsByTime {
+		if result.Total != nil {
+			if costMetric, ok := result.Total["BlendedCost"]; ok {
+				var cost float64
+				fmt.Sscanf(*costMetric.Amount, "%f", &cost)
+				totalCost += cost
+			}
+		}
+	}
+
+	return totalCost, nil
 }

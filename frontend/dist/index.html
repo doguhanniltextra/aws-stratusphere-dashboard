@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="css/utils.css">
     <link rel="stylesheet" href="css/setup.css">
     <link rel="stylesheet" href="css/logout.css">
+    <link rel="stylesheet" href="css/home.css">
 
     <!-- Cytoscape.js for Network Topology -->
     <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
@@ -101,7 +102,11 @@
                 <span>ADMIN</span>
             </div>
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item active" data-view="vpc">
+                <a href="#" class="nav-item active" data-view="home">
+                    <span class="icon"></span>
+                    <span>Home</span>
+                </a>
+                <a href="#" class="nav-item" data-view="vpc">
                     <span class="icon"></span>
                     <span>VPCs</span>
                 </a>
@@ -209,8 +214,14 @@
             <!-- Loading Bar -->
             <div id="loadingBar" class="loading-bar hidden"></div>
 
+            <!-- Home Dashboard Container -->
+            <div id="homeContainer" class="home-container view-section hidden">
+                <!-- Home content will be dynamically inserted here -->
+                <div class="home-loading">Loading account overview...</div>
+            </div>
+
             <!-- Topology Container -->
-            <div id="topologyContainer" class="topology-container hidden">
+            <div id="topologyContainer" class="topology-container view-section hidden">
                 <div class="topology-controls">
                     <button id="topologyReset" class="btn btn-sm">🔄 Reset View</button>
                     <button id="topologyFit" class="btn btn-sm">📐 Fit to Screen</button>
@@ -226,12 +237,12 @@
             </div>
 
             <!-- VPC Cards Grid -->
-            <div id="vpcGrid" class="vpc-grid">
+            <div id="vpcGrid" class="vpc-grid view-section hidden">
                 <!-- VPC cards will be dynamically inserted here -->
             </div>
 
             <!-- VPC Table View -->
-            <div id="vpcTable" class="vpc-table-container hidden">
+            <div id="vpcTable" class="vpc-table-container view-section hidden">
                 <table class="vpc-table">
                     <thead>
                         <tr>
@@ -250,7 +261,7 @@
             </div>
 
             <!-- EC2 Instances Table View -->
-            <div id="ec2Table" class="ec2-table-container hidden">
+            <div id="ec2Table" class="ec2-table-container view-section hidden">
                 <table class="ec2-table">
                     <thead>
                         <tr>
@@ -273,7 +284,7 @@
             </div>
 
             <!-- ECS Clusters Table View -->
-            <div id="ecsTable" class="ecs-table-container hidden">
+            <div id="ecsTable" class="ecs-table-container view-section hidden">
                 <table class="ecs-table">
                     <thead>
                         <tr>
@@ -292,7 +303,7 @@
             </div>
 
             <!-- Subnets Table View -->
-            <div id="subnetTable" class="subnet-table-container hidden">
+            <div id="subnetTable" class="subnet-table-container view-section hidden">
                 <table class="subnet-table">
                     <thead>
                         <tr>
@@ -311,7 +322,7 @@
             </div>
 
             <!-- Security Groups Table View -->
-            <div id="securityGroupTable" class="securitygroup-table-container hidden">
+            <div id="securityGroupTable" class="securitygroup-table-container view-section hidden">
                 <table class="securitygroup-table">
                     <thead>
                         <tr>
@@ -328,7 +339,7 @@
             </div>
 
             <!-- NAT Gateway Table View -->
-            <div id="natTable" class="nat-table-container hidden">
+            <div id="natTable" class="nat-table-container view-section hidden">
                 <table class="nat-table">
                     <thead>
                         <tr>
@@ -346,7 +357,7 @@
             </div>
 
             <!-- Route Table View -->
-            <div id="routeTable" class="route-table-container hidden">
+            <div id="routeTable" class="route-table-container view-section hidden">
                 <table class="route-table">
                     <thead>
                         <tr>
@@ -363,7 +374,7 @@
             </div>
 
             <!-- S3 Bucket Table View -->
-            <div id="s3Table" class="s3-table-container hidden">
+            <div id="s3Table" class="s3-table-container view-section hidden">
                 <table class="s3-table">
                     <thead>
                         <tr>
@@ -378,7 +389,7 @@
             </div>
 
             <!-- Target Group Table View -->
-            <div id="targetGroupTable" class="tg-table-container hidden">
+            <div id="targetGroupTable" class="tg-table-container view-section hidden">
                 <table class="tg-table">
                     <thead>
                         <tr>
@@ -394,7 +405,7 @@
             </div>
 
             <!-- Load Balancer Table View -->
-            <div id="lbTable" class="lb-table-container hidden">
+            <div id="lbTable" class="lb-table-container view-section hidden">
                 <table class="lb-table">
                     <thead>
                         <tr>
@@ -410,7 +421,7 @@
             </div>
 
             <!-- Elastic IP Table View -->
-            <div id="eipTable" class="eip-table-container hidden">
+            <div id="eipTable" class="eip-table-container view-section hidden">
                 <table class="eip-table">
                     <thead>
                         <tr>
@@ -426,7 +437,7 @@
             </div>
 
             <!-- Lambda Functions Table View -->
-            <div id="lambdaTable" class="lambda-table-container hidden">
+            <div id="lambdaTable" class="lambda-table-container view-section hidden">
                 <table class="lambda-table">
                     <thead>
                         <tr>
@@ -442,7 +453,7 @@
             </div>
 
             <!-- RDS Instances Table View -->
-            <div id="rdsTable" class="rds-table-container hidden">
+            <div id="rdsTable" class="rds-table-container view-section hidden">
                 <table class="rds-table">
                     <thead>
                         <tr>
@@ -458,7 +469,7 @@
             </div>
 
             <!-- Playground Container -->
-            <div id="playgroundContainer" class="playground-container hidden">
+            <div id="playgroundContainer" class="playground-container view-section hidden">
                 <div class="playground-header">
                     <h2>Infrastructure Builder</h2>
                     <p>Build your AWS infrastructure visually and generate Terraform code</p>

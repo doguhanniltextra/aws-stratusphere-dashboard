@@ -10,6 +10,10 @@ export function GenerateTerraform(arg1) {
   return window['go']['core']['App']['GenerateTerraform'](arg1);
 }
 
+export function GetAccountHomeInfo() {
+  return window['go']['core']['App']['GetAccountHomeInfo']();
+}
+
 export function GetConfiguration() {
   return window['go']['core']['App']['GetConfiguration']();
 }

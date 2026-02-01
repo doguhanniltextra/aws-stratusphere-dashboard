@@ -30,7 +30,7 @@ export const WindowManager = {
             });
         });
 
-        this.switchView('vpc');
+        this.switchView('home');
     },
 
     async switchView(viewName) {
@@ -40,6 +40,9 @@ export const WindowManager = {
         const previousPage = window.currentPage;
 
         switch (viewName) {
+            case 'home':
+                setCurrentPage('home');
+                break;
             case 'vpc':
                 setCurrentPage('vpc-list');
                 break;
@@ -113,6 +116,10 @@ export const WindowManager = {
             populateGroupByOptions(window.currentPage || 'vpc-list'); // Ensure options are populated
 
             switch (viewName) {
+                case 'home':
+                    const { fetchHomeInfo } = await import('./home.js');
+                    await fetchHomeInfo();
+                    break;
                 case 'vpc':
                     await fetchVPCs();
                     break;

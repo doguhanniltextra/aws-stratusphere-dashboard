@@ -1,5 +1,43 @@
 export namespace models {
 	
+	export class AccountHomeInfo {
+	    account_id: string;
+	    account_alias: string;
+	    user_arn: string;
+	    region: string;
+	    creation_date: string;
+	    mfa_enabled: boolean;
+	    cost_yesterday: number;
+	    cost_month_to_date: number;
+	    cost_last_month: number;
+	    currency: string;
+	    vpc_limit: number;
+	    vpc_usage: number;
+	    instance_limit: number;
+	    instance_usage: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new AccountHomeInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.account_id = source["account_id"];
+	        this.account_alias = source["account_alias"];
+	        this.user_arn = source["user_arn"];
+	        this.region = source["region"];
+	        this.creation_date = source["creation_date"];
+	        this.mfa_enabled = source["mfa_enabled"];
+	        this.cost_yesterday = source["cost_yesterday"];
+	        this.cost_month_to_date = source["cost_month_to_date"];
+	        this.cost_last_month = source["cost_last_month"];
+	        this.currency = source["currency"];
+	        this.vpc_limit = source["vpc_limit"];
+	        this.vpc_usage = source["vpc_usage"];
+	        this.instance_limit = source["instance_limit"];
+	        this.instance_usage = source["instance_usage"];
+	    }
+	}
 	export class ConfigurationInfo {
 	    Region: string;
 	    AccountID: string;

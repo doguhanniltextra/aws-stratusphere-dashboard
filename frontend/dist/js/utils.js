@@ -139,21 +139,22 @@ export function switchView(viewName) {
         populateGroupByOptions(viewName);
     }
 
-    // Hide all view sections first
+    // Hide all view sections (Home, Grid, and all Table containers)
     document.querySelectorAll('.view-section').forEach(section => {
         section.classList.add('hidden');
     });
 
-    // Hide all main containers
-    state.vpcGrid.classList.add('hidden');
-    state.vpcTableContainer.classList.add('hidden');
-    state.eipTableContainer.classList.add('hidden');
-    state.lambdaTableContainer.classList.add('hidden');
-    state.rdsTableContainer.classList.add('hidden');
+    if (state.currentPage === 'home') {
+        if (state.homeContainer) state.homeContainer.classList.remove('hidden');
+        // Hide card/table toggle for home
+        state.cardViewBtn.style.display = 'none';
+        state.tableViewBtn.style.display = 'none';
+        return;
+    }
 
-    // Hide all specific table containers
-    const containers = document.querySelectorAll('.vpc-table-container, .ec2-table-container, .ecs-table-container, .subnet-table-container, .securitygroup-table-container, .nat-table-container, .route-table-container, .s3-table-container, .tg-table-container, .lb-table-container, .playground-container');
-    containers.forEach(el => el.classList.add('hidden'));
+    // Show card/table toggle for other pages
+    state.cardViewBtn.style.display = 'flex';
+    state.tableViewBtn.style.display = 'flex';
 
     // Handle View Modes
     // List of pages that support Card View

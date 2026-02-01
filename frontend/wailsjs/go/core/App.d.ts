@@ -6,6 +6,8 @@ export function CheckCredentials():Promise<boolean>;
 
 export function GenerateTerraform(arg1:string):Promise<string>;
 
+export function GetAccountHomeInfo():Promise<models.AccountHomeInfo>;
+
 export function GetConfiguration():Promise<models.ConfigurationInfo>;
 
 export function GetEC2Instances():Promise<Array<models.EC2InstanceInfo>>;

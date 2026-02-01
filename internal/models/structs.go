@@ -28,10 +28,10 @@ type NATGatewayInfo struct {
 
 // Route Table Info
 type RouteTableInfo struct {
-	ID      string
-	Name    string
-	VPCID   string
-	IsMain  bool
+	ID        string
+	Name      string
+	VPCID     string
+	IsMain    bool
 	Routes    int
 	Subnets   int
 	SubnetIDs []string
@@ -128,4 +128,25 @@ type VPCInfo struct {
 	OwnerId         string
 	DhcpOptionsId   string
 	InstanceTenancy string
+}
+
+// AccountHomeInfo aggregates metadata and cost information for the Home dashboard
+type AccountHomeInfo struct {
+	AccountID    string `json:"account_id"`
+	AccountAlias string `json:"account_alias"`
+	UserARN      string `json:"user_arn"`
+	Region       string `json:"region"`
+	CreationDate string `json:"creation_date"`
+	MFAEnabled   bool   `json:"mfa_enabled"`
+
+	CostYesterday   float64 `json:"cost_yesterday"`
+	CostMonthToDate float64 `json:"cost_month_to_date"`
+	CostLastMonth   float64 `json:"cost_last_month"`
+	Currency        string  `json:"currency"`
+
+	// Quotas/Limits summary
+	VPCLimit      int `json:"vpc_limit"`
+	VPCUsage      int `json:"vpc_usage"`
+	InstanceLimit int `json:"instance_limit"`
+	InstanceUsage int `json:"instance_usage"`
 }

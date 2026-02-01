@@ -4,6 +4,10 @@
     box-sizing: border-box;
 }
 
+.hidden {
+    display: none !important;
+}
+
 :root {
     /* Background Colors - Professional Dark Theme */
     --bg-primary: #0d1117;
