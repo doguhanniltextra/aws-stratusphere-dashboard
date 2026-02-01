@@ -32,8 +32,9 @@ type RouteTableInfo struct {
 	Name    string
 	VPCID   string
 	IsMain  bool
-	Routes  int
-	Subnets int
+	Routes    int
+	Subnets   int
+	SubnetIDs []string
 }
 
 // S3 Bucket Info

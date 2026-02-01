@@ -43,11 +43,13 @@ func FromAWSRouteTable(rt types.RouteTable) RouteTableInfo {
 		Subnets: len(rt.Associations),
 	}
 
-	// Check if main route table
+	// Check if main route table and extract subnet IDs
 	for _, assoc := range rt.Associations {
 		if assoc.Main != nil && *assoc.Main {
 			rtInfo.IsMain = true
-			break
+		}
+		if assoc.SubnetId != nil {
+			rtInfo.SubnetIDs = append(rtInfo.SubnetIDs, safeString(assoc.SubnetId))
 		}
 	}
 

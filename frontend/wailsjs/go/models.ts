@@ -239,6 +239,7 @@ export namespace models {
 	    IsMain: boolean;
 	    Routes: number;
 	    Subnets: number;
+	    SubnetIDs: string[];
 	
 	    static createFrom(source: any = {}) {
 	        return new RouteTableInfo(source);
@@ -252,6 +253,7 @@ export namespace models {
 	        this.IsMain = source["IsMain"];
 	        this.Routes = source["Routes"];
 	        this.Subnets = source["Subnets"];
+	        this.SubnetIDs = source["SubnetIDs"];
 	    }
 	}
 	export class S3BucketInfo {
