@@ -35,7 +35,7 @@ function renderHome(info) {
                 <!-- Identity Card -->
                 <div class="home-card identity-card">
                     <div class="card-header">
-                        <span class="card-icon">👤</span>
+                        <span class="card-icon"></span>
                         <h3>Identity</h3>
                     </div>
                     <div class="card-content">
@@ -53,7 +53,7 @@ function renderHome(info) {
                 <!-- Security Card -->
                 <div class="home-card security-card">
                     <div class="card-header">
-                        <span class="card-icon">🔒</span>
+                        <span class="card-icon"></span>
                         <h3>Security</h3>
                     </div>
                     <div class="card-content">
@@ -67,7 +67,7 @@ function renderHome(info) {
                 <!-- Costs Card -->
                 <div class="home-card costs-card">
                     <div class="card-header">
-                        <span class="card-icon">💰</span>
+                        <span class="card-icon"></span>
                         <h3>Costs</h3>
                         <span class="lag-notice" title="AWS Cost Explorer data usually has a 24h delay">24h Lag</span>
                     </div>
@@ -93,18 +93,35 @@ function renderHome(info) {
                 <!-- Limits Card -->
                 <div class="home-card limits-card">
                     <div class="card-header">
-                        <span class="card-icon">📊</span>
+                        <span class="card-icon"></span>
                         <h3>Core Limits</h3>
                     </div>
                     <div class="card-content">
-                        <div class="limit-item">
-                            <div class="limit-labels">
-                                <span class="label">VPCs</span>
-                                <span class="limit-value">${info.vpc_limit} Max</span>
-                            </div>
-                        </div>
+                        ${renderLimit('VPCs', info.vpc_usage, info.vpc_limit)}
+                        ${renderLimit('EC2 Instances', info.instance_usage, info.instance_limit)}
+                        ${renderLimit('Elastic IPs', info.eip_usage, info.eip_limit)}
+                        ${renderLimit('NAT Gateways', info.nat_usage, info.nat_limit)}
+                        ${renderLimit('Lambda Functions', info.lambda_usage, info.lambda_limit)}
+                        ${renderLimit('S3 Buckets', info.s3_usage, info.s3_limit)}
                     </div>
                 </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderLimit(label, usage, limit) {
+    const percentage = limit > 0 ? (usage / limit) * 100 : 0;
+    const barClass = percentage > 90 ? 'danger' : percentage > 75 ? 'warning' : '';
+
+    return `
+        <div class="limit-item">
+            <div class="limit-labels">
+                <span class="label">${label}</span>
+                <span class="limit-value">${usage} / ${limit}</span>
+            </div>
+            <div class="limit-progress-bg">
+                <div class="limit-progress-bar ${barClass}" style="width: ${Math.min(percentage, 100)}%"></div>
             </div>
         </div>
     `;

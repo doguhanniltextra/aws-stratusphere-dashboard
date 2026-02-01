@@ -63,6 +63,7 @@ type IAMClientAPI interface {
 // LambdaClientAPI defines the interface for the Lambda client
 type LambdaClientAPI interface {
 	ListFunctions(ctx context.Context, params *lambda.ListFunctionsInput, optFns ...func(*lambda.Options)) (*lambda.ListFunctionsOutput, error)
+	GetAccountSettings(ctx context.Context, params *lambda.GetAccountSettingsInput, optFns ...func(*lambda.Options)) (*lambda.GetAccountSettingsOutput, error)
 }
 
 // RDSClientAPI defines the interface for the RDS client

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
+	"github.com/aws/aws-sdk-go-v2/service/costexplorer"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
@@ -11,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	"github.com/aws/aws-sdk-go-v2/service/rds"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/servicequotas"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/stretchr/testify/mock"
 )
@@ -147,6 +149,38 @@ func (m *MockIAMClient) ListAttachedRolePolicies(ctx context.Context, params *ia
 	return args.Get(0).(*iam.ListAttachedRolePoliciesOutput), args.Error(1)
 }
 
+func (m *MockIAMClient) ListAccountAliases(ctx context.Context, params *iam.ListAccountAliasesInput, optFns ...func(*iam.Options)) (*iam.ListAccountAliasesOutput, error) {
+	args := m.Called(ctx, params, optFns)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*iam.ListAccountAliasesOutput), args.Error(1)
+}
+
+func (m *MockIAMClient) GetUser(ctx context.Context, params *iam.GetUserInput, optFns ...func(*iam.Options)) (*iam.GetUserOutput, error) {
+	args := m.Called(ctx, params, optFns)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*iam.GetUserOutput), args.Error(1)
+}
+
+func (m *MockIAMClient) GetAccountPasswordPolicy(ctx context.Context, params *iam.GetAccountPasswordPolicyInput, optFns ...func(*iam.Options)) (*iam.GetAccountPasswordPolicyOutput, error) {
+	args := m.Called(ctx, params, optFns)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*iam.GetAccountPasswordPolicyOutput), args.Error(1)
+}
+
+func (m *MockIAMClient) ListMFADevices(ctx context.Context, params *iam.ListMFADevicesInput, optFns ...func(*iam.Options)) (*iam.ListMFADevicesOutput, error) {
+	args := m.Called(ctx, params, optFns)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*iam.ListMFADevicesOutput), args.Error(1)
+}
+
 // MockLambdaClient is a mock of LambdaClientAPI
 type MockLambdaClient struct {
 	mock.Mock
@@ -158,6 +192,14 @@ func (m *MockLambdaClient) ListFunctions(ctx context.Context, params *lambda.Lis
 		return nil, args.Error(1)
 	}
 	return args.Get(0).(*lambda.ListFunctionsOutput), args.Error(1)
+}
+
+func (m *MockLambdaClient) GetAccountSettings(ctx context.Context, params *lambda.GetAccountSettingsInput, optFns ...func(*lambda.Options)) (*lambda.GetAccountSettingsOutput, error) {
+	args := m.Called(ctx, params, optFns)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*lambda.GetAccountSettingsOutput), args.Error(1)
 }
 
 // MockRDSClient is a mock of RDSClientAPI
@@ -210,4 +252,30 @@ func (m *MockCloudWatchClient) GetMetricData(ctx context.Context, params *cloudw
 		return nil, args.Error(1)
 	}
 	return args.Get(0).(*cloudwatch.GetMetricDataOutput), args.Error(1)
+}
+
+// MockServiceQuotasClient is a mock of ServiceQuotasClientAPI
+type MockServiceQuotasClient struct {
+	mock.Mock
+}
+
+func (m *MockServiceQuotasClient) GetServiceQuota(ctx context.Context, params *servicequotas.GetServiceQuotaInput, optFns ...func(*servicequotas.Options)) (*servicequotas.GetServiceQuotaOutput, error) {
+	args := m.Called(ctx, params, optFns)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*servicequotas.GetServiceQuotaOutput), args.Error(1)
+}
+
+// MockCostExplorerClient is a mock of CostExplorerClientAPI
+type MockCostExplorerClient struct {
+	mock.Mock
+}
+
+func (m *MockCostExplorerClient) GetCostAndUsage(ctx context.Context, params *costexplorer.GetCostAndUsageInput, optFns ...func(*costexplorer.Options)) (*costexplorer.GetCostAndUsageOutput, error) {
+	args := m.Called(ctx, params, optFns)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*costexplorer.GetCostAndUsageOutput), args.Error(1)
 }

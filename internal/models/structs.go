@@ -149,4 +149,12 @@ type AccountHomeInfo struct {
 	VPCUsage      int `json:"vpc_usage"`
 	InstanceLimit int `json:"instance_limit"`
 	InstanceUsage int `json:"instance_usage"`
+	EIPLimit      int `json:"eip_limit"`
+	EIPUsage      int `json:"eip_usage"`
+	NatLimit      int `json:"nat_limit"`
+	NatUsage      int `json:"nat_usage"`
+	LambdaLimit   int `json:"lambda_limit"`
+	LambdaUsage   int `json:"lambda_usage"`
+	S3Limit       int `json:"s3_limit"`
+	S3Usage       int `json:"s3_usage"`
 }

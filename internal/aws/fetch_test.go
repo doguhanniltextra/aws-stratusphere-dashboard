@@ -9,16 +9,23 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	cwTypes "github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
+	"github.com/aws/aws-sdk-go-v2/service/costexplorer"
+	costexplorerTypes "github.com/aws/aws-sdk-go-v2/service/costexplorer/types"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec2Types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	ecsTypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
+	"github.com/aws/aws-sdk-go-v2/service/iam"
+	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	lambdaTypes "github.com/aws/aws-sdk-go-v2/service/lambda/types"
 	"github.com/aws/aws-sdk-go-v2/service/rds"
 	rdsTypes "github.com/aws/aws-sdk-go-v2/service/rds/types"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	s3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
+	"github.com/aws/aws-sdk-go-v2/service/servicequotas"
+	servicequotasTypes "github.com/aws/aws-sdk-go-v2/service/servicequotas/types"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -292,4 +299,67 @@ func TestFetchLambdaFunctions(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, funcs, 1)
 	assert.Equal(t, "test-func", funcs[0].FunctionName)
+}
+func TestFetchAccountHomeInfo(t *testing.T) {
+	mockSTS := new(MockSTSClient)
+	mockIAM := new(MockIAMClient)
+	mockCE := new(MockCostExplorerClient)
+	mockSQ := new(MockServiceQuotasClient)
+	mockEC2 := new(MockEC2Client)
+	mockLambda := new(MockLambdaClient)
+	mockS3 := new(MockS3Client)
+
+	client := &Client{
+		stsClient:    mockSTS,
+		iamClient:    mockIAM,
+		ceClient:     mockCE,
+		sqClient:     mockSQ,
+		ec2Client:    mockEC2,
+		lambdaClient: mockLambda,
+		s3Client:     mockS3,
+	}
+
+	// Mock STS
+	mockSTS.On("GetCallerIdentity", mock.Anything, mock.Anything, mock.Anything).Return(&sts.GetCallerIdentityOutput{
+		Account: aws.String("123456789012"),
+		Arn:     aws.String("arn:aws:iam::123456789012:user/test"),
+	}, nil)
+
+	// Mock IAM
+	mockIAM.On("ListAccountAliases", mock.Anything, mock.Anything, mock.Anything).Return(&iam.ListAccountAliasesOutput{
+		AccountAliases: []string{"test-alias"},
+	}, nil)
+	mockIAM.On("ListMFADevices", mock.Anything, mock.Anything, mock.Anything).Return(&iam.ListMFADevicesOutput{
+		MFADevices: []iamTypes.MFADevice{{}},
+	}, nil)
+
+	// Mock CE
+	mockCE.On("GetCostAndUsage", mock.Anything, mock.Anything, mock.Anything).Return(&costexplorer.GetCostAndUsageOutput{
+		ResultsByTime: []costexplorerTypes.ResultByTime{},
+	}, nil)
+
+	// Mock SQ
+	mockSQ.On("GetServiceQuota", mock.Anything, mock.Anything, mock.Anything).Return(&servicequotas.GetServiceQuotaOutput{
+		Quota: &servicequotasTypes.ServiceQuota{Value: aws.Float64(10)},
+	}, nil)
+
+	// Mock EC2
+	mockEC2.On("DescribeVpcs", mock.Anything, mock.Anything, mock.Anything).Return(&ec2.DescribeVpcsOutput{}, nil)
+	mockEC2.On("DescribeInstances", mock.Anything, mock.Anything, mock.Anything).Return(&ec2.DescribeInstancesOutput{}, nil)
+	mockEC2.On("DescribeAddresses", mock.Anything, mock.Anything, mock.Anything).Return(&ec2.DescribeAddressesOutput{}, nil)
+	mockEC2.On("DescribeNatGateways", mock.Anything, mock.Anything, mock.Anything).Return(&ec2.DescribeNatGatewaysOutput{}, nil)
+
+	// Mock Lambda
+	mockLambda.On("ListFunctions", mock.Anything, mock.Anything, mock.Anything).Return(&lambda.ListFunctionsOutput{}, nil)
+
+	// Mock S3
+	mockS3.On("ListBuckets", mock.Anything, mock.Anything, mock.Anything).Return(&s3.ListBucketsOutput{}, nil)
+
+	info, err := client.FetchAccountHomeInfo(context.Background())
+	assert.NoError(t, err)
+	assert.NotNil(t, info)
+	assert.Equal(t, "123456789012", info.AccountID)
+	assert.Equal(t, "test-alias", info.AccountAlias)
+	assert.True(t, info.MFAEnabled)
+	assert.Equal(t, 10, info.VPCLimit)
 }

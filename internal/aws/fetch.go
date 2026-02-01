@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/costexplorer"
 	costexplorerTypes "github.com/aws/aws-sdk-go-v2/service/costexplorer/types"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	ec2Types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	ecsTypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
 	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
@@ -599,18 +600,84 @@ func (c *Client) FetchAccountHomeInfo(ctx context.Context) (*models.AccountHomeI
 	lmCost, _ := c.getCost(ctx, lastMonthStart, lastMonthEnd)
 	info.CostLastMonth = lmCost
 
-	// 5. Service Quotas (VPC, EC2)
-	// VPC Limit (Service Code: vpc, Quota Code: L-F678F1CE)
-	info.VPCLimit = 5 // Default
-	vpcQuota, err := c.sqClient.GetServiceQuota(ctx, &servicequotas.GetServiceQuotaInput{
-		ServiceCode: aws.String("vpc"),
-		QuotaCode:   aws.String("L-F678F1CE"),
-	})
-	if err == nil && vpcQuota != nil && vpcQuota.Quota != nil {
-		info.VPCLimit = int(*vpcQuota.Quota.Value)
-	}
+	// 5. Service Usage & Quotas
+	info.VPCUsage = c.getUsageCount(ctx, "vpc")
+	info.InstanceUsage = c.getUsageCount(ctx, "ec2")
+	info.EIPUsage = c.getUsageCount(ctx, "eip")
+	info.NatUsage = c.getUsageCount(ctx, "nat")
+	info.LambdaUsage = c.getUsageCount(ctx, "lambda")
+	info.S3Usage = c.getUsageCount(ctx, "s3")
+
+	// Quotas
+	info.VPCLimit = c.getQuota(ctx, "vpc", "L-F678F1CE", 5)
+	info.InstanceLimit = c.getQuota(ctx, "ec2", "L-1216D691", 20)
+	info.EIPLimit = c.getQuota(ctx, "ec2", "L-0263D0A3", 5)
+	info.NatLimit = c.getQuota(ctx, "vpc", "L-FE5A3305", 5)
+	info.LambdaLimit = c.getQuota(ctx, "lambda", "L-B99A9384", 1000)
+	info.S3Limit = c.getQuota(ctx, "s3", "L-DC2B2D3D", 100)
 
 	return info, nil
+}
+
+// getUsageCount is a helper to count active resources
+func (c *Client) getUsageCount(ctx context.Context, service string) int {
+	switch service {
+	case "vpc":
+		vpcs, err := c.ec2Client.DescribeVpcs(ctx, &ec2.DescribeVpcsInput{})
+		if err == nil && vpcs != nil {
+			return len(vpcs.Vpcs)
+		}
+	case "ec2":
+		// Count running instances
+		instances, err := c.ec2Client.DescribeInstances(ctx, &ec2.DescribeInstancesInput{
+			Filters: []ec2Types.Filter{
+				{
+					Name:   aws.String("instance-state-name"),
+					Values: []string{"running"},
+				},
+			},
+		})
+		if err == nil && instances != nil {
+			count := 0
+			for _, res := range instances.Reservations {
+				count += len(res.Instances)
+			}
+			return count
+		}
+	case "eip":
+		ips, err := c.ec2Client.DescribeAddresses(ctx, &ec2.DescribeAddressesInput{})
+		if err == nil && ips != nil {
+			return len(ips.Addresses)
+		}
+	case "nat":
+		nats, err := c.ec2Client.DescribeNatGateways(ctx, &ec2.DescribeNatGatewaysInput{})
+		if err == nil && nats != nil {
+			return len(nats.NatGateways)
+		}
+	case "lambda":
+		lambdas, err := c.lambdaClient.ListFunctions(ctx, &lambda.ListFunctionsInput{})
+		if err == nil && lambdas != nil {
+			return len(lambdas.Functions)
+		}
+	case "s3":
+		buckets, err := c.s3Client.ListBuckets(ctx, &s3.ListBucketsInput{})
+		if err == nil && buckets != nil {
+			return len(buckets.Buckets)
+		}
+	}
+	return 0
+}
+
+// getQuota is a helper to fetch a specific service quota with a fallback
+func (c *Client) getQuota(ctx context.Context, serviceCode, quotaCode string, fallback int) int {
+	quota, err := c.sqClient.GetServiceQuota(ctx, &servicequotas.GetServiceQuotaInput{
+		ServiceCode: aws.String(serviceCode),
+		QuotaCode:   aws.String(quotaCode),
+	})
+	if err == nil && quota != nil && quota.Quota != nil {
+		return int(*quota.Quota.Value)
+	}
+	return fallback
 }
 
 // getCost is a helper to fetch blended costs for a specific range

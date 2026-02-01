@@ -183,15 +183,65 @@
     font-weight: 600;
 }
 
+.limit-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 .limit-labels {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: 0.85rem;
 }
 
 .limit-value {
     color: var(--text-muted);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.limit-progress-bg {
+    height: 6px;
+    background: var(--bg-main);
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.limit-progress-bar {
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: 3px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.limit-progress-bar.warning {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.limit-progress-bar.danger {
+    background: linear-gradient(90deg, #f85149, #ff7b72);
+}
+
+/* Custom Scrollbar for Home */
+.home-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.home-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.home-container::-webkit-scrollbar-thumb {
+    background: var(--bg-tertiary);
+    border-radius: 20px;
+    border: 2px solid var(--bg-main);
+}
+
+.home-container::-webkit-scrollbar-thumb:hover {
+    background: var(--border-color);
 }
 
 @keyframes fadeIn {

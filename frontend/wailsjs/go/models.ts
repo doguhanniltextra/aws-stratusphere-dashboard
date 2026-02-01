@@ -15,6 +15,14 @@ export namespace models {
 	    vpc_usage: number;
 	    instance_limit: number;
 	    instance_usage: number;
+	    eip_limit: number;
+	    eip_usage: number;
+	    nat_limit: number;
+	    nat_usage: number;
+	    lambda_limit: number;
+	    lambda_usage: number;
+	    s3_limit: number;
+	    s3_usage: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new AccountHomeInfo(source);
@@ -36,6 +44,14 @@ export namespace models {
 	        this.vpc_usage = source["vpc_usage"];
 	        this.instance_limit = source["instance_limit"];
 	        this.instance_usage = source["instance_usage"];
+	        this.eip_limit = source["eip_limit"];
+	        this.eip_usage = source["eip_usage"];
+	        this.nat_limit = source["nat_limit"];
+	        this.nat_usage = source["nat_usage"];
+	        this.lambda_limit = source["lambda_limit"];
+	        this.lambda_usage = source["lambda_usage"];
+	        this.s3_limit = source["s3_limit"];
+	        this.s3_usage = source["s3_usage"];
 	    }
 	}
 	export class ConfigurationInfo {
