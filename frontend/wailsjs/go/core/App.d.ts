@@ -12,6 +12,8 @@ export function GetEC2Instances():Promise<Array<models.EC2InstanceInfo>>;
 
 export function GetECSClusters():Promise<Array<models.ECSClusterInfo>>;
 
+export function GetECSMetrics(arg1:string,arg2:number):Promise<models.ResourceMetrics>;
+
 export function GetElasticIPs():Promise<Array<models.ElasticIPInfo>>;
 
 export function GetLambdaFunctions():Promise<Array<models.LambdaFunctionInfo>>;

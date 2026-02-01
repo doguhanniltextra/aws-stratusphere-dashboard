@@ -22,5 +22,6 @@ type AWSClient interface {
 	FetchLambdaFunctions(ctx context.Context) ([]models.LambdaFunctionInfo, error)
 	FetchRDSInstances(ctx context.Context) ([]models.RDSInstanceInfo, error)
 	FetchConfiguration(ctx context.Context) (models.ConfigurationInfo, error)
+	FetchResourceMetrics(ctx context.Context, namespace, metricName string, dimensions map[string]string, period int32) (*models.ResourceMetrics, error)
 	VerifyPermissions(ctx context.Context) ([]models.PermissionStatus, error)
 }

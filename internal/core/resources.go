@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"fmt"
 
 	"aws-terminal-sdk-v1/internal/models"
 )
@@ -94,6 +95,36 @@ func (a *App) GetLoadBalancers() ([]models.LoadBalancerInfo, error) {
 	}
 
 	return a.awsClient.FetchLoadBalancers(context.Background())
+}
+
+// GetECSMetrics returns CloudWatch metrics for a specific ECS cluster
+func (a *App) GetECSMetrics(clusterName string, period int32) (*models.ResourceMetrics, error) {
+	if a.awsClient == nil {
+		return nil, nil
+	}
+
+	dimensions := map[string]string{
+		"ClusterName": clusterName,
+	}
+
+	metricsToFetch := []string{"CPUUtilization", "MemoryUtilization", "NetworkIn", "NetworkOut"}
+	allMetrics := &models.ResourceMetrics{
+		Metrics: make([]models.MetricData, 0),
+	}
+
+	for _, mName := range metricsToFetch {
+		data, err := a.awsClient.FetchResourceMetrics(context.Background(), "AWS/ECS", mName, dimensions, period)
+		if err != nil {
+			// Log error but continue with other metrics
+			fmt.Printf("Error fetching metric %s: %v\n", mName, err)
+			continue
+		}
+		if data != nil {
+			allMetrics.Metrics = append(allMetrics.Metrics, data.Metrics...)
+		}
+	}
+
+	return allMetrics, nil
 }
 
 // GetElasticIPs returns the list of Elastic IPs from AWS

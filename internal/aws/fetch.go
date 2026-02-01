@@ -4,9 +4,12 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
+	cwTypes "github.com/aws/aws-sdk-go-v2/service/cloudwatch/types"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	ecsTypes "github.com/aws/aws-sdk-go-v2/service/ecs/types"
@@ -31,6 +34,7 @@ type Client struct {
 	rdsClient    RDSClientAPI
 	s3Client     S3ClientAPI
 	stsClient    STSClientAPI
+	cwClient     CloudWatchClientAPI
 	region       string
 	cfg          aws.Config // Store config for Cost Explorer
 }
@@ -51,6 +55,7 @@ func NewClient(ctx context.Context) (*Client, error) {
 		rdsClient:    rds.NewFromConfig(cfg),
 		s3Client:     s3.NewFromConfig(cfg),
 		stsClient:    sts.NewFromConfig(cfg),
+		cwClient:     cloudwatch.NewFromConfig(cfg),
 		region:       cfg.Region,
 		cfg:          cfg,
 	}, nil
@@ -67,6 +72,7 @@ func NewClientWithConfig(ctx context.Context, cfg aws.Config) (*Client, error) {
 		rdsClient:    rds.NewFromConfig(cfg),
 		s3Client:     s3.NewFromConfig(cfg),
 		stsClient:    sts.NewFromConfig(cfg),
+		cwClient:     cloudwatch.NewFromConfig(cfg),
 		region:       cfg.Region,
 		cfg:          cfg,
 	}, nil
@@ -205,11 +211,6 @@ func (c *Client) FetchS3Buckets(ctx context.Context) ([]models.S3BucketInfo, err
 		return []models.S3BucketInfo{}, nil
 	}
 
-	// Get region for each bucket (required for some operations, good for metadata)
-	// Note: ListBuckets doesn't return region, so we'll use a default or try to infer.
-	// For simplicity, we'll use the default region from config for now,
-	// but ideally we should get the region for each bucket.
-	// Actually, we can just pass the region from config.
 	cfg, _ := config.LoadDefaultConfig(ctx)
 	region := cfg.Region
 
@@ -469,4 +470,65 @@ func (c *Client) VerifyPermissions(ctx context.Context) ([]models.PermissionStat
 	}
 
 	return results, nil
+}
+
+// FetchResourceMetrics gets metrics for a specific AWS resource
+func (c *Client) FetchResourceMetrics(ctx context.Context, namespace, metricName string, dimensions map[string]string, period int32) (*models.ResourceMetrics, error) {
+	endTime := time.Now()
+	startTime := endTime.Add(-24 * time.Hour)
+
+	var cwDimensions []cwTypes.Dimension
+	for k, v := range dimensions {
+		cwDimensions = append(cwDimensions, cwTypes.Dimension{
+			Name:  aws.String(k),
+			Value: aws.String(v),
+		})
+	}
+
+	input := &cloudwatch.GetMetricDataInput{
+		MetricDataQueries: []cwTypes.MetricDataQuery{
+			{
+				Id: aws.String("m1"),
+				MetricStat: &cwTypes.MetricStat{
+					Metric: &cwTypes.Metric{
+						Namespace:  aws.String(namespace),
+						MetricName: aws.String(metricName),
+						Dimensions: cwDimensions,
+					},
+					Period: aws.Int32(period),
+					Stat:   aws.String("Average"),
+				},
+				ReturnData: aws.Bool(true),
+			},
+		},
+		StartTime: aws.Time(startTime),
+		EndTime:   aws.Time(endTime),
+	}
+
+	output, err := c.cwClient.GetMetricData(ctx, input)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get metric data: %w", err)
+	}
+
+	metrics := &models.ResourceMetrics{
+		Metrics: make([]models.MetricData, 0),
+	}
+
+	for _, result := range output.MetricDataResults {
+		values := result.Values
+		if values == nil {
+			values = []float64{}
+		}
+		data := models.MetricData{
+			Label:  aws.ToString(result.Label),
+			Values: values,
+			Times:  make([]string, len(result.Timestamps)),
+		}
+		for i, ts := range result.Timestamps {
+			data.Times[i] = ts.Format("2006-01-02 15:04")
+		}
+		metrics.Metrics = append(metrics.Metrics, data)
+	}
+
+	return metrics, nil
 }

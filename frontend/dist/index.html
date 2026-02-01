@@ -576,8 +576,19 @@
             <h2>Resource Details</h2>
             <span id="closeDetailSidebar" class="close">&times;</span>
         </div>
+        <div class="detail-tabs">
+            <button class="detail-tab active" data-tab="details">Details</button>
+            <button class="detail-tab" data-tab="metrics">Metrics</button>
+        </div>
         <div class="sidebar-content">
-            <pre id="detailContent" class="json-viewer"></pre>
+            <div id="detailsTab" class="tab-panel active">
+                <pre id="detailContent" class="json-viewer"></pre>
+            </div>
+            <div id="metricsTab" class="tab-panel">
+                <div id="metricsContent" class="metrics-container">
+                    <div class="metrics-loading">Select a resource to view metrics...</div>
+                </div>
+            </div>
         </div>
     </div>
 

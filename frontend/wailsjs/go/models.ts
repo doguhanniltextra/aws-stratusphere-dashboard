@@ -156,6 +156,22 @@ export namespace models {
 	        this.AvailabilityZones = source["AvailabilityZones"];
 	    }
 	}
+	export class MetricData {
+	    label: string;
+	    values: number[];
+	    times: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new MetricData(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.label = source["label"];
+	        this.values = source["values"];
+	        this.times = source["times"];
+	    }
+	}
 	export class NATGatewayInfo {
 	    ID: string;
 	    Name: string;
@@ -231,6 +247,36 @@ export namespace models {
 	        this.PubliclyAccessible = source["PubliclyAccessible"];
 	        this.MasterUsername = source["MasterUsername"];
 	    }
+	}
+	export class ResourceMetrics {
+	    metrics: MetricData[];
+	
+	    static createFrom(source: any = {}) {
+	        return new ResourceMetrics(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.metrics = this.convertValues(source["metrics"], MetricData);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class RouteTableInfo {
 	    ID: string;

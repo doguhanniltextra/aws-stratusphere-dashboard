@@ -22,6 +22,10 @@ export function GetECSClusters() {
   return window['go']['core']['App']['GetECSClusters']();
 }
 
+export function GetECSMetrics(arg1, arg2) {
+  return window['go']['core']['App']['GetECSMetrics'](arg1, arg2);
+}
+
 export function GetElasticIPs() {
   return window['go']['core']['App']['GetElasticIPs']();
 }

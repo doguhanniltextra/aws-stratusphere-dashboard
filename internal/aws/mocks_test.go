@@ -3,6 +3,7 @@ package aws
 import (
 	"context"
 
+	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
@@ -196,4 +197,17 @@ func (m *MockSTSClient) GetCallerIdentity(ctx context.Context, params *sts.GetCa
 		return nil, args.Error(1)
 	}
 	return args.Get(0).(*sts.GetCallerIdentityOutput), args.Error(1)
+}
+
+// MockCloudWatchClient is a mock of CloudWatchClientAPI
+type MockCloudWatchClient struct {
+	mock.Mock
+}
+
+func (m *MockCloudWatchClient) GetMetricData(ctx context.Context, params *cloudwatch.GetMetricDataInput, optFns ...func(*cloudwatch.Options)) (*cloudwatch.GetMetricDataOutput, error) {
+	args := m.Called(ctx, params, optFns)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*cloudwatch.GetMetricDataOutput), args.Error(1)
 }

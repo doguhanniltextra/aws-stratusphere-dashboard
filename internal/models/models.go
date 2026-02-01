@@ -274,3 +274,15 @@ type AWSCredentials struct {
 	SecretAccessKey string `json:"secret_access_key"`
 	Region          string `json:"region"`
 }
+
+// MetricData represents a single metric's time series data
+type MetricData struct {
+	Label  string    `json:"label"`
+	Values []float64 `json:"values"`
+	Times  []string  `json:"times"`
+}
+
+// ResourceMetrics represents a collection of metrics for a resource
+type ResourceMetrics struct {
+	Metrics []MetricData `json:"metrics"`
+}
