@@ -62,6 +62,7 @@ export let filteredRDSInstances = [];
 
 
 export let currentGroupField = 'none';
+export let currentFont = 'geist';
 
 // Helper to group data
 export function groupData(data, field) {
@@ -88,6 +89,10 @@ export function groupData(data, field) {
 
 export function setGroupField(field) {
     currentGroupField = field;
+}
+
+export function setCurrentFont(font) {
+    currentFont = font;
 }
 
 export function setCurrentPage(page) {

@@ -51,21 +51,17 @@
     --radius-md: 6px;
     --radius-lg: 8px;
 
-    /* Typography */
-    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-    --font-size-xs: 0.75rem;
-    --font-size-sm: 0.875rem;
-    --font-size-base: 1rem;
-    --font-size-lg: 1.125rem;
-    --font-size-xl: 1.25rem;
-    --font-size-2xl: 1.5rem;
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
 }
+
 
 /* ===================================
    GLOBAL LAYOUT
    =================================== */
 body {
-    font-family: var(--font-family);
+    font-family: var(--font-sans);
     font-size: var(--font-size-base);
     background: var(--bg-primary);
     color: var(--text-primary);
@@ -337,7 +333,7 @@ main {
 .vpc-card-id {
     font-size: var(--font-size-xs);
     color: var(--text-muted);
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-mono);
     margin-bottom: var(--space-md);
 }
 
@@ -420,7 +416,7 @@ main {
 
 /* Typography Utilities */
 .font-mono {
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-mono);
     letter-spacing: -0.5px;
 }
 
@@ -634,7 +630,7 @@ main {
 .ec2-table td.vpc-id,
 .ecs-table td.vpc-id,
 .subnet-table td.vpc-id {
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-mono);
     color: var(--text-secondary);
 }
 
@@ -784,6 +780,9 @@ main {
     border-radius: var(--radius-lg);
     width: 90%;
     max-width: 500px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
     box-shadow: var(--shadow-lg);
     animation: modalSlideIn 0.3s ease;
 }
@@ -831,6 +830,8 @@ main {
 
 .modal-body {
     padding: var(--space-lg);
+    overflow-y: auto;
+    flex: 1;
 }
 
 .setting-item {
@@ -852,7 +853,7 @@ main {
 
 .setting-value {
     color: var(--text-primary);
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-mono);
     background: var(--bg-tertiary);
     padding: var(--space-xs) var(--space-sm);
     border-radius: var(--radius-sm);
@@ -935,7 +936,7 @@ main {
 }
 
 .json-viewer {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: var(--font-mono);
     font-size: var(--font-size-sm);
     color: var(--text-primary);
     white-space: pre-wrap;
@@ -1258,7 +1259,7 @@ main {
 .node-meta {
     font-size: 11px;
     color: var(--text-muted);
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-mono);
     background: var(--bg-primary);
     padding: 2px 6px;
     border-radius: 4px;
@@ -1342,7 +1343,7 @@ main {
     padding: var(--space-lg);
     border-radius: var(--radius-md);
     border: 1px solid var(--border-default);
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-mono);
     font-size: var(--font-size-sm);
     line-height: 1.6;
     overflow-x: auto;

@@ -225,3 +225,27 @@ export function switchView(viewName) {
             console.warn(`Unknown view: ${state.currentPage}`);
     }
 }
+
+export function applyFontTheme(fontName) {
+    // Remove old theme classes
+    document.body.classList.remove('theme-font-geist', 'theme-font-inter', 'theme-font-outfit');
+
+    // Add new theme class
+    document.body.classList.add(`theme-font-${fontName}`);
+
+    // Update state
+    state.setCurrentFont(fontName);
+
+    // Persist
+    localStorage.setItem('stratusphere-font', fontName);
+}
+
+export function initFontTheme() {
+    const savedFont = localStorage.getItem('stratusphere-font') || 'geist';
+    applyFontTheme(savedFont);
+
+    const fontSelect = document.getElementById('fontSelect');
+    if (fontSelect) {
+        fontSelect.value = savedFont;
+    }
+}

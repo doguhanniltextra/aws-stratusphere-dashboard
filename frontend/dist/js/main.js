@@ -1,7 +1,7 @@
 
 import * as state from './state.js';
 import { themeManager } from './themeManager.js';
-import { updateActiveMenu, switchView, showDashboard, populateGroupByOptions } from './utils.js';
+import { updateActiveMenu, switchView, showDashboard, populateGroupByOptions, initFontTheme, applyFontTheme } from './utils.js';
 import { fetchVPCs, filterVPCs, initVPCListeners } from './vpc.js';
 import { fetchEC2Instances, initEC2Listeners } from './ec2.js';
 import { fetchECSClusters, initECSListeners } from './ecs.js';
@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Credentials exist - initialize app normally
     initSettings();
+    initFontTheme();
     detailSidebar.init();
 
     // Initialize interaction listeners
@@ -135,6 +136,14 @@ if (groupBySelect) {
         else if (state.currentPage === 'elasticip-list') fetchElasticIPs();
         else if (state.currentPage === 'lambda-list') fetchLambdaFunctions();
         else if (state.currentPage === 'rds-list') fetchRDSInstances();
+    });
+}
+
+// Font Switcher
+const fontSelect = document.getElementById('fontSelect');
+if (fontSelect) {
+    fontSelect.addEventListener('change', (e) => {
+        applyFontTheme(e.target.value);
     });
 }
 

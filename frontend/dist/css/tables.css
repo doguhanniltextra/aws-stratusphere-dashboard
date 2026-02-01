@@ -82,7 +82,7 @@
 .ec2-table td.vpc-id,
 .ecs-table td.vpc-id,
 .subnet-table td.vpc-id {
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-mono);
     color: var(--text-secondary);
 }
 

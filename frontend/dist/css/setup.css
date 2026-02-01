@@ -76,7 +76,7 @@
     border-radius: 6px;
     color: var(--text-primary);
     font-size: 14px;
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-mono);
     transition: border-color 0.2s;
 }
 
