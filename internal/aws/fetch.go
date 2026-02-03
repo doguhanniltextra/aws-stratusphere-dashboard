@@ -28,6 +28,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/aws/aws-sdk-go-v2/service/support"
 
+	"aws-terminal-sdk-v1/internal/constants"
 	"aws-terminal-sdk-v1/internal/models"
 )
 
@@ -564,7 +565,7 @@ func (c *Client) FetchResourceMetrics(ctx context.Context, namespace, metricName
 func (c *Client) FetchAccountHomeInfo(ctx context.Context) (*models.AccountHomeInfo, error) {
 	info := &models.AccountHomeInfo{
 		Region:   c.region,
-		Currency: "USD",
+		Currency: constants.AWSCurrency,
 	}
 
 	// 1. Get Caller Identity (AccountID, UserARN)
@@ -588,14 +589,14 @@ func (c *Client) FetchAccountHomeInfo(ctx context.Context) (*models.AccountHomeI
 
 	// 4. Costs (Yesterday, MTD, Last Month)
 	now := time.Now().UTC()
-	today := now.Format("2006-01-02")
-	yesterday := now.AddDate(0, 0, -1).Format("2006-01-02")
-	firstOfMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC).Format("2006-01-02")
+	today := now.Format(constants.DateFormat)
+	yesterday := now.AddDate(0, 0, -1).Format(constants.DateFormat)
+	firstOfMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC).Format(constants.DateFormat)
 
 	// Dates for last month
 	lastMonthTime := now.AddDate(0, -1, 0)
-	lastMonthStart := time.Date(lastMonthTime.Year(), lastMonthTime.Month(), 1, 0, 0, 0, 0, time.UTC).Format("2006-01-02")
-	lastMonthEnd := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC).Format("2006-01-02")
+	lastMonthStart := time.Date(lastMonthTime.Year(), lastMonthTime.Month(), 1, 0, 0, 0, 0, time.UTC).Format(constants.DateFormat)
+	lastMonthEnd := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC).Format(constants.DateFormat)
 
 	// Yesterday's Cost
 	yCost, _ := c.getCost(ctx, yesterday, today)
@@ -618,12 +619,12 @@ func (c *Client) FetchAccountHomeInfo(ctx context.Context) (*models.AccountHomeI
 	info.S3Usage = c.getUsageCount(ctx, "s3")
 
 	// Quotas
-	info.VPCLimit = c.getQuota(ctx, "vpc", "L-F678F1CE", 5)
-	info.InstanceLimit = c.getQuota(ctx, "ec2", "L-1216D691", 20)
-	info.EIPLimit = c.getQuota(ctx, "ec2", "L-0263D0A3", 5)
-	info.NatLimit = c.getQuota(ctx, "vpc", "L-FE5A3305", 5)
-	info.LambdaLimit = c.getQuota(ctx, "lambda", "L-B99A9384", 1000)
-	info.S3Limit = c.getQuota(ctx, "s3", "L-DC2B2D3D", 100)
+	info.VPCLimit = c.getQuota(ctx, "vpc", constants.QuotaCodeVPC, constants.DefaultLimitVPC)
+	info.InstanceLimit = c.getQuota(ctx, "ec2", constants.QuotaCodeInstance, constants.DefaultLimitInstance)
+	info.EIPLimit = c.getQuota(ctx, "ec2", constants.QuotaCodeEIP, constants.DefaultLimitEIP)
+	info.NatLimit = c.getQuota(ctx, "vpc", constants.QuotaCodeNAT, constants.DefaultLimitNAT)
+	info.LambdaLimit = c.getQuota(ctx, "lambda", constants.QuotaCodeLambda, constants.DefaultLimitLambda)
+	info.S3Limit = c.getQuota(ctx, "s3", constants.QuotaCodeS3, constants.DefaultLimitS3)
 
 	// 6. Security Findings (Critical & High)
 	findings, err := c.FetchSecurityFindings(ctx)
@@ -664,11 +665,11 @@ func (c *Client) FetchSecurityFindings(ctx context.Context) ([]models.SecurityFi
 	input := &securityhub.GetFindingsInput{
 		Filters: &securityhubTypes.AwsSecurityFindingFilters{
 			SeverityLabel: []securityhubTypes.StringFilter{
-				{Value: aws.String("CRITICAL"), Comparison: "EQUALS"},
-				{Value: aws.String("HIGH"), Comparison: "EQUALS"},
+				{Value: aws.String(constants.SecurityHubSeverityCritical), Comparison: "EQUALS"},
+				{Value: aws.String(constants.SecurityHubSeverityHigh), Comparison: "EQUALS"},
 			},
 			RecordState: []securityhubTypes.StringFilter{
-				{Value: aws.String("ACTIVE"), Comparison: "EQUALS"},
+				{Value: aws.String(constants.SecurityHubStateActive), Comparison: "EQUALS"},
 			},
 		},
 		MaxResults: aws.Int32(5), // Top 5
@@ -704,9 +705,9 @@ func (c *Client) FetchTrustedAdvisorRecommendations(ctx context.Context) ([]mode
 	// We check a subset of known high-value checks
 	// Note: Fully dynamic listing requires advanced logic, we target common cost winners
 	checkIDs := []string{
-		"eW7uY9STB8", // Idle Load Balancers
-		"DAvU99Dc4C", // Unused EBS Volumes
-		"Q7v9un9STB", // Underutilized EC2 Instances (Requires Business Support)
+		constants.TACheckIDIdleLoadBalancers, // Idle Load Balancers
+		constants.TACheckIDUnusedEBSVolumes,  // Unused EBS Volumes
+		constants.TACheckIDUnderutilizedEC2,  // Underutilized EC2 Instances (Requires Business Support)
 	}
 
 	recommendations := make([]models.TrustedAdvisorRecommendation, 0)
@@ -727,10 +728,10 @@ func (c *Client) FetchTrustedAdvisorRecommendations(ctx context.Context) ([]mode
 
 		// Basic mapping of check IDs to names for this demo
 		name := "Resource Optimization"
-		category := "Cost Optimization"
-		if id == "eW7uY9STB8" {
+		category := constants.TACategoryCostOptimization
+		if id == constants.TACheckIDIdleLoadBalancers {
 			name = "Idle Load Balancers"
-		} else if id == "DAvU99Dc4C" {
+		} else if id == constants.TACheckIDUnusedEBSVolumes {
 			name = "Unused EBS Volumes"
 		}
 

@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"aws-terminal-sdk-v1/internal/constants"
 	"aws-terminal-sdk-v1/internal/models"
 	"crypto/aes"
 	"crypto/cipher"
@@ -23,12 +24,12 @@ func GetCredentialsPath() (string, error) {
 		return "", err
 	}
 
-	credDir := filepath.Join(homeDir, ".stratusphere")
-	if err := os.MkdirAll(credDir, 0700); err != nil {
+	credDir := filepath.Join(homeDir, constants.ConfigDirName)
+	if err := os.MkdirAll(credDir, constants.DirPermSecure); err != nil {
 		return "", err
 	}
 
-	return filepath.Join(credDir, "credentials.enc"), nil
+	return filepath.Join(credDir, constants.CredsFileName), nil
 }
 
 // GetMachineID generates a machine-specific identifier for encryption
@@ -112,7 +113,7 @@ func SaveCredentials(creds *models.AWSCredentials) error {
 		return err
 	}
 
-	return os.WriteFile(credPath, encrypted, 0600)
+	return os.WriteFile(credPath, encrypted, constants.FilePermSecure)
 }
 
 func LoadCredentials() (*models.AWSCredentials, error) {

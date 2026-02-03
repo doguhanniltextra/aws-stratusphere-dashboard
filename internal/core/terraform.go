@@ -6,6 +6,8 @@ import (
 	"os"
 	"strings"
 
+	"aws-terminal-sdk-v1/internal/constants"
+
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -24,12 +26,12 @@ func (a *App) GenerateTerraform(resourcesJSON string) (string, error) {
 	output.WriteString("  required_providers {\n")
 	output.WriteString("    aws = {\n")
 	output.WriteString("      source  = \"hashicorp/aws\"\n")
-	output.WriteString("      version = \"~> 5.0\"\n")
+	output.WriteString(fmt.Sprintf("      version = \"%s\"\n", constants.AWSProviderVersion))
 	output.WriteString("    }\n")
 	output.WriteString("  }\n")
 	output.WriteString("}\n\n")
 	output.WriteString("provider \"aws\" {\n")
-	output.WriteString("  region = \"us-east-1\"\n")
+	output.WriteString(fmt.Sprintf("  region = \"%s\"\n", constants.AWSDefaultRegion))
 	output.WriteString("}\n\n")
 
 	// Generate resources in dependency order
@@ -71,11 +73,11 @@ func (a *App) SaveTerraformFile(content string) (string, error) {
 	// Open Save Dialog
 	filename, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
 		Title:           "Save Terraform File",
-		DefaultFilename: "main.tf",
+		DefaultFilename: constants.DefaultTerraformFile,
 		Filters: []runtime.FileFilter{
 			{
-				DisplayName: "Terraform Files (*.tf)",
-				Pattern:     "*.tf",
+				DisplayName: fmt.Sprintf("Terraform Files (%s)", constants.TerraformFilePattern),
+				Pattern:     constants.TerraformFilePattern,
 			},
 		},
 	})
@@ -90,7 +92,7 @@ func (a *App) SaveTerraformFile(content string) (string, error) {
 	}
 
 	// Write file
-	err = os.WriteFile(filename, []byte(content), 0644)
+	err = os.WriteFile(filename, []byte(content), constants.FilePermReadWrite)
 	if err != nil {
 		return "", fmt.Errorf("failed to write file: %w", err)
 	}
@@ -153,10 +155,10 @@ func generateVPC(id string, props map[string]interface{}) string {
   enable_dns_hostnames = %t
 
   tags = {
-    Name = "%s"
+    %s = "%s"
   }
 }
-`, safeName, cidr, dnsHostnames, name)
+`, safeName, cidr, dnsHostnames, constants.TagName, name)
 }
 
 func generateSubnet(id string, props map[string]interface{}, parentID string) string {
@@ -174,10 +176,10 @@ func generateSubnet(id string, props map[string]interface{}, parentID string) st
   map_public_ip_on_launch = %t
 
   tags = {
-    Name = "%s"
+    %s = "%s"
   }
 }
-`, safeName, strings.ReplaceAll(parentID, "-", "_"), cidr, az, mapPublicIP, name)
+`, safeName, strings.ReplaceAll(parentID, "-", "_"), cidr, az, mapPublicIP, constants.TagName, name)
 }
 
 func generateEC2(id string, props map[string]interface{}, parentID string) string {
@@ -193,10 +195,10 @@ func generateEC2(id string, props map[string]interface{}, parentID string) strin
   subnet_id     = aws_subnet.%s.id
 
   tags = {
-    Name = "%s"
+    %s = "%s"
   }
 }
-`, safeName, ami, instanceType, strings.ReplaceAll(parentID, "-", "_"), name)
+`, safeName, ami, instanceType, strings.ReplaceAll(parentID, "-", "_"), constants.TagName, name)
 }
 
 func generateRDS(id string, props map[string]interface{}, parentID string) string {
@@ -214,10 +216,10 @@ func generateRDS(id string, props map[string]interface{}, parentID string) strin
   skip_final_snapshot  = true
 
   tags = {
-    Name = "%s"
+    %s = "%s"
   }
 }
-`, safeName, name, engine, instanceClass, safeName, name)
+`, safeName, name, engine, instanceClass, safeName, constants.TagName, name)
 }
 
 func generateS3(id string, props map[string]interface{}) string {
@@ -239,10 +241,10 @@ func generateS3(id string, props map[string]interface{}) string {
   bucket = "%s"%s
 
   tags = {
-    Name = "%s"
+    %s = "%s"
   }
 }
-`, safeName, bucketName, versioningBlock, bucketName)
+`, safeName, bucketName, versioningBlock, constants.TagName, bucketName)
 }
 
 func generateLambda(id string, props map[string]interface{}) string {
@@ -256,15 +258,15 @@ func generateLambda(id string, props map[string]interface{}) string {
   function_name = "%s"
   runtime       = "%s"
   memory_size   = %s
-  handler       = "index.handler"
+  handler       = "%s"
   role          = aws_iam_role.%s_role.arn
-  filename      = "function.zip"
+  filename      = "%s"
 
   tags = {
-    Name = "%s"
+    %s = "%s"
   }
 }
-`, safeName, functionName, runtime, memorySize, safeName, functionName)
+`, safeName, functionName, runtime, memorySize, constants.LambdaHandler, safeName, constants.LambdaZipFile, constants.TagName, functionName)
 }
 
 func generateSecurityGroup(id string, props map[string]interface{}, parentID string) string {
@@ -279,8 +281,8 @@ func generateSecurityGroup(id string, props map[string]interface{}, parentID str
   vpc_id      = aws_vpc.%s.id
 
   tags = {
-    Name = "%s"
+    %s = "%s"
   }
 }
-`, safeName, name, description, strings.ReplaceAll(parentID, "-", "_"), name)
+`, safeName, name, description, strings.ReplaceAll(parentID, "-", "_"), constants.TagName, name)
 }

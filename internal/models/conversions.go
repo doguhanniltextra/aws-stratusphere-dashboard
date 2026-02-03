@@ -1,6 +1,8 @@
 package models
 
 import (
+	"aws-terminal-sdk-v1/internal/constants"
+
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	elbv2Types "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
 	s3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
@@ -24,7 +26,7 @@ func FromAWSNATGateway(nat types.NatGateway) NATGatewayInfo {
 
 	// Extract Name from tags
 	for _, tag := range nat.Tags {
-		if tag.Key != nil && *tag.Key == "Name" {
+		if tag.Key != nil && *tag.Key == constants.TagName {
 			natInfo.Name = safeString(tag.Value)
 			break
 		}
@@ -55,7 +57,7 @@ func FromAWSRouteTable(rt types.RouteTable) RouteTableInfo {
 
 	// Extract Name from tags
 	for _, tag := range rt.Tags {
-		if tag.Key != nil && *tag.Key == "Name" {
+		if tag.Key != nil && *tag.Key == constants.TagName {
 			rtInfo.Name = safeString(tag.Value)
 			break
 		}
@@ -69,8 +71,8 @@ func FromAWSS3Bucket(bucket s3Types.Bucket, region string) S3BucketInfo {
 	s3Info := S3BucketInfo{
 		Name:         safeString(bucket.Name),
 		Region:       region,
-		CreationDate: bucket.CreationDate.Format("2006-01-02"),
-		Versioning:   "Disabled",
+		CreationDate: bucket.CreationDate.Format(constants.DateFormat),
+		Versioning:   constants.S3VerDisabled,
 		PublicAccess: false,
 		Encryption:   false,
 	}
