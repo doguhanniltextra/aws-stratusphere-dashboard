@@ -1,0 +1,64 @@
+/* Beta Version Badges and Warnings */
+.beta-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    font-size: 0.5em;
+    font-weight: 700;
+    padding: 0.3em 0.8em;
+    border-radius: 6px;
+    vertical-align: middle;
+    margin-left: 0.5em;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+    letter-spacing: 0.05em;
+    animation: pulse-beta 2s ease-in-out infinite;
+}
+
+@keyframes pulse-beta {
+
+    0%,
+    100% {
+        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 4px 16px rgba(245, 158, 11, 0.5);
+    }
+}
+
+.beta-warning {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-left: 4px solid #f59e0b;
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 8px;
+    color: #92400e;
+    font-size: 0.95rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.beta-warning strong {
+    color: #b45309;
+    font-weight: 600;
+}
+
+.beta-notice {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border: 2px solid #3b82f6;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+}
+
+.beta-notice p {
+    color: #1e40af;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.beta-notice strong {
+    color: #1e3a8a;
+    font-weight: 600;
+}

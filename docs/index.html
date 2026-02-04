@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Stratusphere - AWS Infrastructure Visualization & Terraform Code Generation Platform. Technical documentation for developers.">
+    <meta name="keywords" content="AWS, Terraform, Infrastructure, Visualization, Go, Wails, Cloud">
+    <meta name="author" content="Doğuhan">
+    <link rel="icon" type="image/png" href="appicon.png">
+    <title>Stratusphere - Technical Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="beta-styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="logo-icon">☁️</span>
+                <span class="brand-name">Stratusphere</span>
+                <span class="version-badge">v1.0.0</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#deployment">Deployment</a></li>
+                <li><a href="https://github.com/doguhanniltextra/aws-stratusphere-dashboard" target="_blank">GitHub</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Stratusphere <span class="beta-badge">BETA</span></h1>
+                <p class="hero-subtitle">AWS Infrastructure Visualization & Terraform Code Generation Platform</p>
+                <div class="beta-warning">
+                    <strong>⚠️ Beta Software:</strong> This is a beta release. You may encounter bugs and unexpected
+                    behavior. Please report issues on GitHub.
+                </div>
+                <p class="hero-description">
+                    A cross-platform desktop application built with <strong>Wails v2</strong> and <strong>Go
+                        1.24</strong>,
+                    providing real-time AWS resource discovery, interactive topology visualization, and
+                    reverse-engineering
+                    capabilities for Infrastructure-as-Code generation.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#quickstart" class="btn btn-primary">Get Started</a>
+                    <a href="https://github.com/doguhanniltextra/aws-stratusphere-dashboard"
+                        class="btn btn-secondary">View on GitHub</a>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-badge">Go 1.24.6</span>
+                    <span class="tech-badge">Wails v2.11.0</span>
+                    <span class="tech-badge">AWS SDK v2</span>
+                    <span class="tech-badge">Terraform</span>
+                </div>
+
+
+            </div>
+    </section>
+
+
+
+    <!-- Overview Section -->
+    <section id="overview" class="section">
+        <div class="container">
+            <h2 class="section-title">Overview</h2>
+            <div class="beta-notice">
+                <p><strong>📢 Beta Version Notice:</strong> Stratusphere is currently in beta. While core features are
+                    functional, you may experience bugs, performance issues, or incomplete functionality. We appreciate
+                    your feedback and bug reports!</p>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Resource Discovery</h3>
+                    <p>Parallel fetching of AWS resources across 12+ services with automatic pagination and rate
+                        limiting</p>
+                    <ul class="feature-list">
+                        <li>EC2, VPC, RDS, S3, Lambda</li>
+                        <li>Load Balancers, ECS, IAM</li>
+                        <li>CloudWatch, Cost Explorer</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🗺️</div>
+                    <h3>Topology Visualization</h3>
+                    <p>Interactive D3.js force-directed graphs showing resource relationships and dependencies</p>
+                    <ul class="feature-list">
+                        <li>Hierarchical network layouts</li>
+                        <li>Drag, zoom, pan interactions</li>
+                        <li>Real-time updates</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚙️</div>
+                    <h3>Terraform Generation</h3>
+                    <p>Reverse-engineer existing infrastructure into production-ready Terraform HCL code</p>
+                    <ul class="feature-list">
+                        <li>Dependency resolution</li>
+                        <li>Variable extraction</li>
+                        <li>Multi-file organization</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Security First</h3>
+                    <p>AES-256-GCM encryption for credentials with local-only processing</p>
+                    <ul class="feature-list">
+                        <li>PBKDF2 key derivation</li>
+                        <li>No external data transmission</li>
+                        <li>Least-privilege IAM policies</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshots Gallery Section -->
+    <section class="screenshots-section">
+        <div class="container">
+            <h2 class="section-title">Application Screenshots</h2>
+
+            <!-- Screenshot 1 - Left aligned -->
+            <div class="screenshot-row">
+                <div class="screenshot-content">
+                    <img src="screenshots/app_1.png" alt="Dashboard Overview">
+                </div>
+                <div class="screenshot-text">
+                    <h3>Dashboard Overview</h3>
+                    <p>Your AWS overview in one place</p>
+                </div>
+            </div>
+
+            <!-- Screenshot 2 - Right aligned -->
+            <div class="screenshot-row screenshot-row-reverse">
+                <div class="screenshot-text">
+                    <h3>Resource Discovery</h3>
+                    <p>Automatically discover and catalog all AWS resources across multiple regions and services.</p>
+                </div>
+                <div class="screenshot-content">
+                    <img src="screenshots/app_2.png" alt="Resource Discovery">
+                </div>
+            </div>
+
+            <!-- Screenshot 3 - Left aligned -->
+            <div class="screenshot-row">
+                <div class="screenshot-content">
+                    <img src="screenshots/app_3.png" alt="Topology Visualization">
+                </div>
+                <div class="screenshot-text">
+                    <h3>Topology Visualization</h3>
+                    <p>Interactive network topology graphs showing resource relationships and dependencies.</p>
+                </div>
+            </div>
+
+            <!-- Screenshot 4 - Right aligned -->
+            <div class="screenshot-row screenshot-row-reverse">
+                <div class="screenshot-text">
+                    <h3>Terraform Generation</h3>
+                    <p>Generate production-ready Terraform code from your existing AWS infrastructure.</p>
+                </div>
+                <div class="screenshot-content">
+                    <img src="screenshots/app_4.png" alt="Terraform Code Generation">
+                </div>
+            </div>
+
+            <!-- Screenshot 5 - Left aligned -->
+            <div class="screenshot-row">
+                <div class="screenshot-content">
+                    <img src="screenshots/app_5.png" alt="Security Analysis">
+                </div>
+                <div class="screenshot-text">
+                    <h3>Security Analysis</h3>
+                    <p>Identify security vulnerabilities and compliance issues across your infrastructure.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Architecture Section -->
+    <section id="architecture" class="section section-dark">
+        <div class="container">
+            <h2 class="section-title">Architecture</h2>
+
+            <div class="architecture-overview">
+                <h3>Technology Stack</h3>
+                <div class="stack-grid">
+                    <div class="stack-item">
+                        <h4>Backend</h4>
+                        <ul>
+                            <li><strong>Runtime:</strong> Go 1.24.6</li>
+                            <li><strong>Framework:</strong> Wails v2.11.0</li>
+                            <li><strong>AWS SDK:</strong> aws-sdk-go-v2</li>
+                            <li><strong>Logging:</strong> slog + lumberjack</li>
+                            <li><strong>Crypto:</strong> AES-256-GCM</li>
+                        </ul>
+                    </div>
+                    <div class="stack-item">
+                        <h4>Frontend</h4>
+                        <ul>
+                            <li><strong>Architecture:</strong> Vanilla JavaScript</li>
+                            <li><strong>Rendering:</strong> WebView2 / WebKit</li>
+                            <li><strong>Visualization:</strong> D3.js</li>
+                            <li><strong>IPC:</strong> Wails Runtime Bridge</li>
+                            <li><strong>Assets:</strong> Embedded (embed.FS)</li>
+                        </ul>
+                    </div>
+                    <div class="stack-item">
+                        <h4>Build System</h4>
+                        <ul>
+                            <li><strong>Compiler:</strong> Go with CGO</li>
+                            <li><strong>Bundler:</strong> Wails CLI</li>
+                            <li><strong>Platforms:</strong> Windows, macOS, Linux</li>
+                            <li><strong>Testing:</strong> testify framework</li>
+                            <li><strong>CI/CD:</strong> GitHub Actions</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="architecture-diagram">
+                <h3>System Architecture</h3>
+                <pre class="diagram"><code>┌─────────────────────────────────────────────────────────────┐
+│                      Frontend (WebView)                     │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │  Dashboard   │  │  Topology    │  │  Terraform   │      │
+│  │     UI       │  │  Visualizer  │  │   Generator  │      │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘      │
+│         │                 │                 │               │
+│         └─────────────────┴─────────────────┘               │
+│                           │                                 │
+│                  Wails Runtime Bridge (IPC)                 │
+│                           │                                 │
+└───────────────────────────┼─────────────────────────────────┘
+                            │
+┌───────────────────────────┼─────────────────────────────────┐
+│                      Backend (Go)                           │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │              Core Application Layer                  │   │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────────────┐  │   │
+│  │  │   App    │  │   Auth   │  │    Terraform     │  │   │
+│  │  │ Lifecycle│  │ Handlers │  │    Generator     │  │   │
+│  │  └────┬─────┘  └────┬─────┘  └────┬─────────────┘  │   │
+│  └───────┼─────────────┼─────────────┼────────────────┘   │
+│          │             │             │                     │
+│  ┌───────┼─────────────┼─────────────┼────────────────┐   │
+│  │       │      AWS Integration Layer│                 │   │
+│  │  ┌────▼─────┐  ┌───▼────┐  ┌─────▼──────┐         │   │
+│  │  │  Client  │  │ Fetch  │  │  Topology  │         │   │
+│  │  │   Init   │  │ Engine │  │   Builder  │         │   │
+│  │  └────┬─────┘  └───┬────┘  └─────┬──────┘         │   │
+│  └───────┼────────────┼─────────────┼────────────────┘   │
+│          │            │             │                     │
+│  ┌───────┼────────────┼─────────────┼────────────────┐   │
+│  │       │     Infrastructure Layer │                 │   │
+│  │  ┌────▼─────┐  ┌──▼─────┐  ┌────▼──────┐         │   │
+│  │  │   Auth   │  │ Models │  │  Logger   │         │   │
+│  │  │  (AES)   │  │ Structs│  │  (slog)   │         │   │
+│  │  └──────────┘  └────────┘  └───────────┘         │   │
+│  └─────────────────────────────────────────────────────┘   │
+└───────────────────────────┼─────────────────────────────────┘
+                            │
+                    ┌───────▼────────┐
+                    │   AWS Cloud    │
+                    │  EC2, RDS, S3  │
+                    │ Lambda, VPC... │
+                    └────────────────┘</code></pre>
+            </div>
+
+            <div class="data-flow">
+                <h3>Resource Discovery Flow</h3>
+                <ol class="flow-steps">
+                    <li>
+                        <strong>Credential Loading</strong>
+                        <p>AES-256-GCM decryption from <code>~/.stratusphere/credentials.enc</code></p>
+                    </li>
+                    <li>
+                        <strong>AWS Client Initialization</strong>
+                        <p>Static credentials provider with region configuration</p>
+                    </li>
+                    <li>
+                        <strong>Parallel Resource Fetching</strong>
+                        <p>10-15 concurrent goroutines with <code>sync.WaitGroup</code></p>
+                    </li>
+                    <li>
+                        <strong>Data Normalization</strong>
+                        <p>AWS SDK types → Internal model structs</p>
+                    </li>
+                    <li>
+                        <strong>Topology Graph Construction</strong>
+                        <p>Build DAG of resource relationships</p>
+                    </li>
+                    <li>
+                        <strong>Frontend Rendering</strong>
+                        <p>D3.js force-directed graph visualization</p>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Quick Start Section -->
+    <section id="quickstart" class="section section-dark">
+        <div class="container">
+            <h2 class="section-title">Quick Start</h2>
+
+            <div class="quickstart-grid">
+                <div class="quickstart-step">
+                    <div class="step-number">1</div>
+                    <h3>Clone Repository</h3>
+                    <div class="code-block">
+                        <pre><code class="language-bash">git clone https://github.com/doguhanniltextra/aws-stratusphere-dashboard.git
+cd aws-stratusphere-dashboard</code></pre>
+                    </div>
+                </div>
+
+                <div class="quickstart-step">
+                    <div class="step-number">2</div>
+                    <h3>Install Dependencies</h3>
+                    <div class="code-block">
+                        <pre><code class="language-bash"># Install Go dependencies
+go mod download
+
+# Install Wails CLI
+go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+# Verify installation
+wails doctor</code></pre>
+                    </div>
+                </div>
+
+                <div class="quickstart-step">
+                    <div class="step-number">3</div>
+                    <h3>Development Mode</h3>
+                    <div class="code-block">
+                        <pre><code class="language-bash"># Run in development mode with hot reload
+wails dev
+
+# Access at http://localhost:34115</code></pre>
+                    </div>
+                </div>
+
+                <div class="quickstart-step">
+                    <div class="step-number">4</div>
+                    <h3>Production Build</h3>
+                    <div class="code-block">
+                        <pre><code class="language-bash"># Build for current platform
+wails build
+
+# Output: build/bin/Stratusphere.exe (Windows)
+# Output: build/bin/Stratusphere.app (macOS)
+# Output: build/bin/Stratusphere (Linux)</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="iam-policy">
+                <h3>Required IAM Policy</h3>
+                <p>Attach this policy to your IAM user for read-only access:</p>
+                <div class="code-block">
+                    <pre><code class="language-json">{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "StratusphereReadOnlyAccess",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeInstances",
+        "ec2:DescribeVpcs",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeNatGateways",
+        "ec2:DescribeRouteTables",
+        "ec2:DescribeAddresses",
+        "rds:DescribeDBInstances",
+        "s3:ListBuckets",
+        "s3:ListAllMyBuckets",
+        "elasticloadbalancing:DescribeLoadBalancers",
+        "elasticloadbalancing:DescribeTargetGroups",
+        "lambda:ListFunctions",
+        "ecs:ListClusters",
+        "ecs:DescribeClusters",
+        "sts:GetCallerIdentity",
+        "iam:ListAttachedUserPolicies",
+        "iam:ListAttachedRolePolicies",
+        "iam:ListAccountAliases",
+        "iam:ListMFADevices",
+        "iam:SimulatePrincipalPolicy",
+        "cloudwatch:GetMetricData",
+        "ce:GetCostAndUsage",
+        "servicequotas:GetServiceQuota",
+        "securityhub:GetFindings",
+        "support:DescribeTrustedAdvisorCheckResult"
+      ],
+      "Resource": "*"
+    }
+  ]
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deployment Section -->
+    <section id="deployment" class="section">
+        <div class="container">
+            <h2 class="section-title">Deployment & Testing</h2>
+
+            <div class="deployment-grid">
+                <div class="deployment-card">
+                    <h3>🧪 Testing</h3>
+                    <div class="code-block">
+                        <pre><code class="language-bash"># Run all tests
+go test ./...
+
+# Run with coverage
+go test -cover ./...
+
+# Generate coverage report
+go test -coverprofile=coverage.out ./...
+go tool cover -html=coverage.out
+
+# Integration tests (requires AWS credentials)
+export AWS_ACCESS_KEY_ID=xxx
+export AWS_SECRET_ACCESS_KEY=yyy
+export AWS_REGION=us-east-1
+go test -tags=integration ./internal/aws/...</code></pre>
+                    </div>
+                </div>
+
+                <div class="deployment-card">
+                    <h3>📦 Cross-Platform Builds</h3>
+                    <div class="code-block">
+                        <pre><code class="language-bash"># Windows
+wails build -platform windows/amd64
+
+# macOS (Universal Binary)
+wails build -platform darwin/universal
+
+# Linux
+wails build -platform linux/amd64
+
+# All platforms
+wails build -platform windows/amd64,darwin/universal,linux/amd64</code></pre>
+                    </div>
+                </div>
+
+                <div class="deployment-card">
+                    <h3>🔧 Build Optimization</h3>
+                    <div class="code-block">
+                        <pre><code class="language-bash"># Debug build with verbose logging
+wails build -debug -v
+
+# Production build (strip debug symbols)
+wails build -ldflags "-s -w"
+
+# With custom icon
+wails build -icon appicon.png
+
+# Skip frontend build
+wails build -skipbindings</code></pre>
+                    </div>
+                </div>
+
+                <div class="deployment-card">
+                    <h3>⚡ Performance Metrics</h3>
+                    <ul class="metrics-list">
+                        <li><strong>Memory Usage:</strong> ~50 MB (idle), ~200 MB (1000+ resources)</li>
+                        <li><strong>Startup Time:</strong> ~2s (cold), ~500ms (warm)</li>
+                        <li><strong>Resource Fetching:</strong> 10-15 concurrent goroutines</li>
+                        <li><strong>Cache TTL:</strong> 5 minutes for resource snapshots</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security Section -->
+    <section id="security" class="section section-dark">
+        <div class="container">
+            <h2 class="section-title">Security & Best Practices</h2>
+
+            <div class="security-grid">
+                <div class="security-card">
+                    <h3>🔐 Credential Encryption</h3>
+                    <ul>
+                        <li><strong>Algorithm:</strong> AES-256-GCM</li>
+                        <li><strong>Key Derivation:</strong> PBKDF2 (100,000 iterations)</li>
+                        <li><strong>Salt:</strong> 32-byte random per file</li>
+                        <li><strong>Nonce:</strong> 12-byte random per operation</li>
+                    </ul>
+                    <p class="security-note">
+                        <strong>Storage Locations:</strong><br>
+                        Windows: <code>%APPDATA%\.stratusphere\credentials.enc</code><br>
+                        macOS: <code>~/Library/Application Support/stratusphere/credentials.enc</code><br>
+                        Linux: <code>~/.config/stratusphere/credentials.enc</code>
+                    </p>
+                </div>
+
+                <div class="security-card">
+                    <h3>🛡️ Threat Model</h3>
+                    <div class="threat-list">
+                        <div class="threat-item protected">
+                            <span class="threat-status">✅ Protected</span>
+                            <span>Disk theft (encrypted at rest)</span>
+                        </div>
+                        <div class="threat-item protected">
+                            <span class="threat-status">✅ Protected</span>
+                            <span>Memory dumps (credentials cleared)</span>
+                        </div>
+                        <div class="threat-item not-protected">
+                            <span class="threat-status">❌ Not Protected</span>
+                            <span>Root/admin access to running process</span>
+                        </div>
+                        <div class="threat-item not-protected">
+                            <span class="threat-status">❌ Not Protected</span>
+                            <span>Malware with process injection</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="security-card">
+                    <h3>✅ Best Practices</h3>
+                    <ol class="best-practices">
+                        <li>Use IAM roles with temporary credentials (STS AssumeRole)</li>
+                        <li>Enable MFA for IAM users</li>
+                        <li>Rotate access keys every 90 days</li>
+                        <li>Use least-privilege IAM policies</li>
+                        <li>Enable CloudTrail for API call auditing</li>
+                        <li>Never commit credentials to version control</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Troubleshooting Section -->
+    <section id="troubleshooting" class="section">
+        <div class="container">
+            <h2 class="section-title">Troubleshooting</h2>
+
+            <div class="troubleshooting-accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>Build fails with CGO errors</h3>
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>Error:</strong> <code>cgo: C compiler "gcc" not found</code></p>
+                        <p><strong>Solution (Windows):</strong></p>
+                        <div class="code-block">
+                            <pre><code class="language-bash"># Install MinGW-w64
+choco install mingw
+
+# Or download from: https://www.mingw-w64.org/</code></pre>
+                        </div>
+                        <p><strong>Solution (macOS):</strong></p>
+                        <div class="code-block">
+                            <pre><code class="language-bash">xcode-select --install</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>AWS API rate limiting</h3>
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>Error:</strong> <code>RequestLimitExceeded: Rate exceeded</code></p>
+                        <p>Exponential backoff is already implemented in <code>internal/aws/fetch.go</code>. If you
+                            continue to experience rate limiting:</p>
+                        <ul>
+                            <li>Reduce concurrent goroutines in fetch configuration</li>
+                            <li>Increase delay between API calls</li>
+                            <li>Request AWS service quota increase</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>Credentials not loading</h3>
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>Error:</strong>
+                            <code>failed to load credentials: cipher: message authentication failed</code>
+                        </p>
+                        <p><strong>Causes:</strong></p>
+                        <ul>
+                            <li>Corrupted credentials file</li>
+                            <li>Wrong encryption key (file modified externally)</li>
+                        </ul>
+                        <p><strong>Solution:</strong></p>
+                        <div class="code-block">
+                            <pre><code class="language-bash"># Delete credentials file and re-authenticate
+# Linux/macOS
+rm ~/.config/stratusphere/credentials.enc
+
+# Windows
+del %APPDATA%\.stratusphere\credentials.enc</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <h3>Resources not showing in UI</h3>
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>Checklist:</strong></p>
+                        <ul>
+                            <li>✅ Correct region selected?</li>
+                            <li>✅ IAM policy includes required <code>Describe*</code> permissions?</li>
+                            <li>✅ Resources exist in the selected region?</li>
+                            <li>✅ Check application logs: <code>~/.stratusphere/logs/app.log</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Stratusphere</h4>
+                    <p>AWS Infrastructure Visualization Platform</p>
+                    <p class="footer-license">MIT License © 2026</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://github.com/doguhanniltextra/aws-stratusphere-dashboard">GitHub
+                                Repository</a></li>
+                        <li><a href="https://wails.io/docs/introduction">Wails Documentation</a></li>
+                        <li><a href="https://aws.github.io/aws-sdk-go-v2/docs/">AWS SDK for Go v2</a></li>
+                        <li><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs">Terraform AWS
+                                Provider</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul class="footer-links">
+                        <li><a href="mailto:doguhannilt@gmail.com">doguhannilt@gmail.com</a></li>
+                        <li><a href="https://github.com/doguhanniltextra">GitHub Profile</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Accordion functionality
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', function () {
+                const item = this.parentElement;
+                const isActive = item.classList.contains('active');
+
+                // Close all accordion items
+                document.querySelectorAll('.accordion-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+
+                // Open clicked item if it wasn't active
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function () {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+
+</html>
